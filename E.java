@@ -1,3 +1,5 @@
+package test.main;
+
 public class E {
 
     public void e_m1() {
