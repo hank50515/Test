@@ -1,0 +1,221 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="PayrollModel.Store" Alias="Self" ProviderManifestToken="09.00.1399" xmlns="http://schemas.microsoft.com/ado/2006/04/edm/ssdl">
+  <EntityContainer Name="dbo">
+    <EntitySet Name="Department" EntityType="PayrollModel.Store.Department" />
+    <EntitySet Name="Designation" EntityType="PayrollModel.Store.Designation" />
+    <EntitySet Name="Employee" EntityType="PayrollModel.Store.Employee" />
+    <EntitySet Name="ProvidentFund" EntityType="PayrollModel.Store.ProvidentFund" />
+    <EntitySet Name="Salary" EntityType="PayrollModel.Store.Salary" />
+    <EntitySet Name="OldEmployeesSet" EntityType="PayrollModel.Store.OldEmployees" Schema="dbo" />
+    <AssociationSet Name="FK_Employee_Department" Association="PayrollModel.Store.FK_Employee_Department">
+      <End Role="Department" EntitySet="Department" />
+      <End Role="Employee" EntitySet="Employee" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Employee_Designation" Association="PayrollModel.Store.FK_Employee_Designation">
+      <End Role="Designation" EntitySet="Designation" />
+      <End Role="Employee" EntitySet="Employee" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Employee_ProvidentFund" Association="PayrollModel.Store.FK_Employee_ProvidentFund">
+      <End Role="ProvidentFund" EntitySet="ProvidentFund" />
+      <End Role="Employee" EntitySet="Employee" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Salary_Employee" Association="PayrollModel.Store.FK_Salary_Employee">
+      <End Role="Employee" EntitySet="Employee" />
+      <End Role="Salary" EntitySet="Salary" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Salary_ProvidentFund" Association="PayrollModel.Store.FK_Salary_ProvidentFund">
+      <End Role="ProvidentFund" EntitySet="ProvidentFund" />
+      <End Role="Salary" EntitySet="Salary" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="OldEmployees">
+    <Key>
+      <PropertyRef Name="EmployeeID" />
+    </Key>
+    <Property Name="EmployeeID" Type="int" Nullable="false" />
+    <Property Name="FirstName" Type="varchar" Nullable="false" MaxLength="50" />
+    <Property Name="LastName" Type="varchar" Nullable="false" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="Department">
+    <Key>
+      <PropertyRef Name="DepartmentID" />
+    </Key>
+    <Property Name="DepartmentID" Type="bigint" Nullable="false" />
+    <Property Name="DepartmentName" Type="varchar" Nullable="false" MaxLength="50" />
+    <Property Name="DepartmentHead" Type="bigint" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Designation">
+    <Key>
+      <PropertyRef Name="DesignationID" />
+    </Key>
+    <Property Name="DesignationID" Type="bigint" Nullable="false" />
+    <Property Name="DesignationName" Type="varchar" Nullable="false" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="Employee">
+    <Key>
+      <PropertyRef Name="EmployeeID" />
+    </Key>
+    <Property Name="EmployeeID" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="FirstName" Type="varchar" Nullable="false" MaxLength="50" />
+    <Property Name="LastName" Type="varchar" Nullable="false" MaxLength="50" />
+    <Property Name="Address" Type="varchar" Nullable="false" MaxLength="50" />
+    <Property Name="Phone" Type="varchar" Nullable="false" MaxLength="50" />
+    <Property Name="DepartmentID" Type="bigint" Nullable="false" />
+    <Property Name="JoiningDate" Type="datetime" Nullable="false" />
+    <Property Name="LeavingDate" Type="datetime" />
+    <Property Name="DesignationID" Type="bigint" Nullable="false" />
+    <Property Name="PFID" Type="bigint" Nullable="false" />
+  </EntityType>
+  <EntityType Name="ProvidentFund">
+    <Key>
+      <PropertyRef Name="PFID" />
+    </Key>
+    <Property Name="PFID" Type="bigint" Nullable="false" />
+    <Property Name="EmployeeID" Type="bigint" Nullable="false" />
+    <Property Name="PFAmount" Type="money" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Salary">
+    <Key>
+      <PropertyRef Name="SalaryID" />
+    </Key>
+    <Property Name="SalaryID" Type="bigint" Nullable="false" />
+    <Property Name="EmployeeID" Type="bigint" Nullable="false" />
+    <Property Name="Basic" Type="money" Nullable="false" />
+    <Property Name="Allowance" Type="money" Nullable="false" />
+    <Property Name="PFID" Type="bigint" />
+    <Property Name="Tax" Type="money" Nullable="false" />
+    <Property Name="GrossSalary" Type="money" Nullable="false" />
+    <Property Name="NetSalary" Type="money" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_Employee_Department">
+    <End Role="Department" Type="PayrollModel.Store.Department" Multiplicity="1" />
+    <End Role="Employee" Type="PayrollModel.Store.Employee" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Department">
+        <PropertyRef Name="DepartmentID" />
+      </Principal>
+      <Dependent Role="Employee">
+        <PropertyRef Name="DepartmentID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Employee_Designation">
+    <End Role="Designation" Type="PayrollModel.Store.Designation" Multiplicity="1" />
+    <End Role="Employee" Type="PayrollModel.Store.Employee" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Designation">
+        <PropertyRef Name="DesignationID" />
+      </Principal>
+      <Dependent Role="Employee">
+        <PropertyRef Name="DesignationID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Employee_ProvidentFund">
+    <End Role="ProvidentFund" Type="PayrollModel.Store.ProvidentFund" Multiplicity="1" />
+    <End Role="Employee" Type="PayrollModel.Store.Employee" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ProvidentFund">
+        <PropertyRef Name="PFID" />
+      </Principal>
+      <Dependent Role="Employee">
+        <PropertyRef Name="PFID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Salary_Employee">
+    <End Role="Employee" Type="PayrollModel.Store.Employee" Multiplicity="1" />
+    <End Role="Salary" Type="PayrollModel.Store.Salary" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Employee">
+        <PropertyRef Name="EmployeeID" />
+      </Principal>
+      <Dependent Role="Salary">
+        <PropertyRef Name="EmployeeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Salary_ProvidentFund">
+    <End Role="ProvidentFund" Type="PayrollModel.Store.ProvidentFund" Multiplicity="0..1" />
+    <End Role="Salary" Type="PayrollModel.Store.Salary" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ProvidentFund">
+        <PropertyRef Name="PFID" />
+      </Principal>
+      <Dependent Role="Salary">
+        <PropertyRef Name="PFID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Function Name="Department_Delete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="DepartmentID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="Department_Insert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="DepartmentName" Type="varchar" Mode="In" />
+  </Function>
+  <Function Name="Department_Update" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="DepartmentID" Type="int" Mode="In" />
+    <Parameter Name="DepartmentName" Type="varchar" Mode="In" />
+  </Function>
+  <Function Name="Designation_Delete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="DesignationID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="Designation_Insert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="DesignationName" Type="varchar" Mode="In" />
+  </Function>
+  <Function Name="Designation_Update" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="DesignationID" Type="int" Mode="In" />
+    <Parameter Name="DesignationName" Type="varchar" Mode="In" />
+  </Function>
+  <Function Name="Employee_Delete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="EmployeeID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="Employee_Insert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="FirstName" Type="varchar" Mode="In" />
+    <Parameter Name="LastName" Type="varchar" Mode="In" />
+    <Parameter Name="Address" Type="varchar" Mode="In" />
+    <Parameter Name="Phone" Type="varchar" Mode="In" />
+    <Parameter Name="DepartmentID" Type="int" Mode="In" />
+    <Parameter Name="DesignationID" Type="int" Mode="In" />
+    <Parameter Name="JoiningDate" Type="datetime" Mode="In" />
+    <Parameter Name="LeavingDate" Type="datetime" Mode="In" />
+  </Function>
+  <Function Name="Employee_Update" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="EmployeeID" Type="int" Mode="In" />
+    <Parameter Name="FirstName" Type="varchar" Mode="In" />
+    <Parameter Name="LastName" Type="varchar" Mode="In" />
+    <Parameter Name="Address" Type="varchar" Mode="In" />
+    <Parameter Name="Phone" Type="varchar" Mode="In" />
+    <Parameter Name="DepartmentID" Type="int" Mode="In" />
+    <Parameter Name="DesignationID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="ProvidentFund_Delete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="PFID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="ProvidentFund_Insert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="EmployeeID" Type="int" Mode="In" />
+    <Parameter Name="PFAmount" Type="money" Mode="In" />
+  </Function>
+  <Function Name="Salary_Delete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="SalaryID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="Salary_Insert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="EmployeeID" Type="int" Mode="In" />
+    <Parameter Name="PFID" Type="int" Mode="In" />
+    <Parameter Name="Basic" Type="money" Mode="In" />
+    <Parameter Name="Allowance" Type="money" Mode="In" />
+    <Parameter Name="Tax" Type="money" Mode="In" />
+    <Parameter Name="GrossSalary" Type="money" Mode="In" />
+    <Parameter Name="NetSalary" Type="money" Mode="In" />
+  </Function>
+  <Function Name="Salary_Update" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="SalaryID" Type="int" Mode="In" />
+    <Parameter Name="EmployeeID" Type="int" Mode="In" />
+    <Parameter Name="PFID" Type="int" Mode="In" />
+    <Parameter Name="Basic" Type="money" Mode="In" />
+    <Parameter Name="Allowance" Type="money" Mode="In" />
+    <Parameter Name="Tax" Type="money" Mode="In" />
+    <Parameter Name="GrossSalary" Type="money" Mode="In" />
+    <Parameter Name="NetSalary" Type="money" Mode="In" />
+  </Function>
+</Schema>

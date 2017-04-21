@@ -1,0 +1,5 @@
+C:\Projects\Packtpub\ADOEF\ADOEF\bin\ADOEF.dll
+C:\Projects\Packtpub\ADOEF\ADOEF\bin\ADOEF.pdb
+C:\Projects\Packtpub\ADOEF\ADOEF\obj\Debug\ResolveAssemblyReference.cache
+C:\Projects\Packtpub\ADOEF\ADOEF\obj\Debug\ADOEF.dll
+C:\Projects\Packtpub\ADOEF\ADOEF\obj\Debug\ADOEF.pdb

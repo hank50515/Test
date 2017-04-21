@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="urn:schemas-microsoft-com:windows:storage:mapping:CS">
+  <EntityContainerMapping StorageEntityContainer="dbo" CdmEntityContainer="PayrollEntities">
+    <EntitySetMapping Name="Department">
+      <EntityTypeMapping TypeName="IsTypeOf(PayrollModel.Department)">
+        <MappingFragment StoreEntitySet="Department">
+          <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
+          <ScalarProperty Name="DepartmentName" ColumnName="DepartmentName" />
+          <ScalarProperty Name="DepartmentHead" ColumnName="DepartmentHead" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Designation">
+      <EntityTypeMapping TypeName="IsTypeOf(PayrollModel.Designation)">
+        <MappingFragment StoreEntitySet="Designation">
+          <ScalarProperty Name="DesignationID" ColumnName="DesignationID" />
+          <ScalarProperty Name="DesignationName" ColumnName="DesignationName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Employee">
+      <EntityTypeMapping TypeName="IsTypeOf(PayrollModel.Employee)">
+        <MappingFragment StoreEntitySet="Employee">
+          <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+          <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+          <ScalarProperty Name="LastName" ColumnName="LastName" />
+          <ScalarProperty Name="Address" ColumnName="Address" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="JoiningDate" ColumnName="JoiningDate" />
+          <ScalarProperty Name="LeavingDate" ColumnName="LeavingDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ProvidentFund">
+      <EntityTypeMapping TypeName="IsTypeOf(PayrollModel.ProvidentFund)">
+        <MappingFragment StoreEntitySet="ProvidentFund">
+          <ScalarProperty Name="PFID" ColumnName="PFID" />
+          <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+          <ScalarProperty Name="PFAmount" ColumnName="PFAmount" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Salary">
+      <EntityTypeMapping TypeName="IsTypeOf(PayrollModel.Salary)">
+        <MappingFragment StoreEntitySet="Salary">
+          <ScalarProperty Name="SalaryID" ColumnName="SalaryID" />
+          <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+          <ScalarProperty Name="Basic" ColumnName="Basic" />
+          <ScalarProperty Name="Allowance" ColumnName="Allowance" />
+          <ScalarProperty Name="Tax" ColumnName="Tax" />
+          <ScalarProperty Name="GrossSalary" ColumnName="GrossSalary" />
+          <ScalarProperty Name="NetSalary" ColumnName="NetSalary" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="FK_Employee_Department" TypeName="PayrollModel.FK_Employee_Department" StoreEntitySet="Employee">
+      <EndProperty Name="Department">
+        <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
+      </EndProperty>
+      <EndProperty Name="Employee">
+        <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="FK_Employee_Designation" TypeName="PayrollModel.FK_Employee_Designation" StoreEntitySet="Employee">
+      <EndProperty Name="Designation">
+        <ScalarProperty Name="DesignationID" ColumnName="DesignationID" />
+      </EndProperty>
+      <EndProperty Name="Employee">
+        <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="FK_Employee_ProvidentFund" TypeName="PayrollModel.FK_Employee_ProvidentFund" StoreEntitySet="Employee">
+      <EndProperty Name="ProvidentFund">
+        <ScalarProperty Name="PFID" ColumnName="PFID" />
+      </EndProperty>
+      <EndProperty Name="Employee">
+        <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="FK_Salary_ProvidentFund" TypeName="PayrollModel.FK_Salary_ProvidentFund" StoreEntitySet="Salary">
+      <EndProperty Name="ProvidentFund">
+        <ScalarProperty Name="PFID" ColumnName="PFID" />
+      </EndProperty>
+      <EndProperty Name="Salary">
+        <ScalarProperty Name="SalaryID" ColumnName="SalaryID" />
+      </EndProperty>
+      <Condition ColumnName="PFID" IsNull="false" />
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="FK_Salary_Employee" TypeName="PayrollModel.FK_Salary_Employee" StoreEntitySet="Salary">
+      <EndProperty Name="Salary">
+        <ScalarProperty Name="SalaryID" ColumnName="SalaryID" />
+      </EndProperty>
+      <EndProperty Name="Employee">
+        <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+      </EndProperty>
+    </AssociationSetMapping>
+  </EntityContainerMapping>
+</Mapping>

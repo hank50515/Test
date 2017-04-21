@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="PayrollModel" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2006/04/edm">
+  <EntityContainer Name="PayrollEntities">
+    <EntitySet Name="Department" EntityType="PayrollModel.Department" />
+    <EntitySet Name="Designation" EntityType="PayrollModel.Designation" />
+    <EntitySet Name="Employee" EntityType="PayrollModel.Employee" />
+    <EntitySet Name="ProvidentFund" EntityType="PayrollModel.ProvidentFund" />
+    <EntitySet Name="Salary" EntityType="PayrollModel.Salary" />
+    <AssociationSet Name="FK_Employee_Department" Association="PayrollModel.FK_Employee_Department">
+      <End Role="Department" EntitySet="Department" />
+      <End Role="Employee" EntitySet="Employee" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Employee_Designation" Association="PayrollModel.FK_Employee_Designation">
+      <End Role="Designation" EntitySet="Designation" />
+      <End Role="Employee" EntitySet="Employee" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Employee_ProvidentFund" Association="PayrollModel.FK_Employee_ProvidentFund">
+      <End Role="ProvidentFund" EntitySet="ProvidentFund" />
+      <End Role="Employee" EntitySet="Employee" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Salary_ProvidentFund" Association="PayrollModel.FK_Salary_ProvidentFund">
+      <End Role="ProvidentFund" EntitySet="ProvidentFund" />
+      <End Role="Salary" EntitySet="Salary" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Salary_Employee" Association="PayrollModel.FK_Salary_Employee">
+      <End Role="Employee" EntitySet="Employee" />
+      <End Role="Salary" EntitySet="Salary" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Department">
+    <Key>
+      <PropertyRef Name="DepartmentID" />
+    </Key>
+    <Property Name="DepartmentID" Type="Int64" Nullable="false" />
+    <Property Name="DepartmentName" Type="String" Nullable="false" MaxLength="50" Unicode="false" />
+    <Property Name="DepartmentHead" Type="Int64" Nullable="false" />
+    <NavigationProperty Name="Employee" Relationship="PayrollModel.FK_Employee_Department" FromRole="Department" ToRole="Employee" />
+  </EntityType>
+  <EntityType Name="Designation">
+    <Key>
+      <PropertyRef Name="DesignationID" />
+    </Key>
+    <Property Name="DesignationID" Type="Int64" Nullable="false" />
+    <Property Name="DesignationName" Type="String" Nullable="false" MaxLength="50" Unicode="false" />
+    <NavigationProperty Name="Employee" Relationship="PayrollModel.FK_Employee_Designation" FromRole="Designation" ToRole="Employee" />
+  </EntityType>
+  <EntityType Name="Employee">
+    <Key>
+      <PropertyRef Name="EmployeeID" />
+    </Key>
+    <Property Name="EmployeeID" Type="Int32" Nullable="false" />
+    <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" Unicode="false" />
+    <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" Unicode="false" />
+    <Property Name="Address" Type="String" Nullable="false" MaxLength="50" Unicode="false" />
+    <Property Name="Phone" Type="String" Nullable="false" MaxLength="50" Unicode="false" />
+    <Property Name="JoiningDate" Type="DateTime" Nullable="false" />
+    <Property Name="LeavingDate" Type="DateTime" />
+    <NavigationProperty Name="Department" Relationship="PayrollModel.FK_Employee_Department" FromRole="Employee" ToRole="Department" />
+    <NavigationProperty Name="Designation" Relationship="PayrollModel.FK_Employee_Designation" FromRole="Employee" ToRole="Designation" />
+    <NavigationProperty Name="ProvidentFund" Relationship="PayrollModel.FK_Employee_ProvidentFund" FromRole="Employee" ToRole="ProvidentFund" />
+    <NavigationProperty Name="Salary" Relationship="PayrollModel.FK_Salary_Employee" FromRole="Employee" ToRole="Salary" />
+  </EntityType>
+  <EntityType Name="ProvidentFund">
+    <Key>
+      <PropertyRef Name="PFID" />
+    </Key>
+    <Property Name="PFID" Type="Int64" Nullable="false" />
+    <Property Name="EmployeeID" Type="Int64" Nullable="false" />
+    <Property Name="PFAmount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <NavigationProperty Name="Employee" Relationship="PayrollModel.FK_Employee_ProvidentFund" FromRole="ProvidentFund" ToRole="Employee" />
+    <NavigationProperty Name="Salary" Relationship="PayrollModel.FK_Salary_ProvidentFund" FromRole="ProvidentFund" ToRole="Salary" />
+  </EntityType>
+  <EntityType Name="Salary">
+    <Key>
+      <PropertyRef Name="SalaryID" />
+    </Key>
+    <Property Name="SalaryID" Type="Int64" Nullable="false" />
+    <Property Name="EmployeeID" Type="Int64" Nullable="false" />
+    <Property Name="Basic" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="Allowance" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="Tax" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="GrossSalary" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="NetSalary" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <NavigationProperty Name="ProvidentFund" Relationship="PayrollModel.FK_Salary_ProvidentFund" FromRole="Salary" ToRole="ProvidentFund" />
+    <NavigationProperty Name="Employee" Relationship="PayrollModel.FK_Salary_Employee" FromRole="Salary" ToRole="Employee" />
+  </EntityType>
+  <Association Name="FK_Employee_Department">
+    <End Role="Department" Type="PayrollModel.Department" Multiplicity="1" />
+    <End Role="Employee" Type="PayrollModel.Employee" Multiplicity="*" />
+  </Association>
+  <Association Name="FK_Employee_Designation">
+    <End Role="Designation" Type="PayrollModel.Designation" Multiplicity="1" />
+    <End Role="Employee" Type="PayrollModel.Employee" Multiplicity="*" />
+  </Association>
+  <Association Name="FK_Employee_ProvidentFund">
+    <End Role="ProvidentFund" Type="PayrollModel.ProvidentFund" Multiplicity="1" />
+    <End Role="Employee" Type="PayrollModel.Employee" Multiplicity="*" />
+  </Association>
+  <Association Name="FK_Salary_ProvidentFund">
+    <End Role="ProvidentFund" Type="PayrollModel.ProvidentFund" Multiplicity="0..1" />
+    <End Role="Salary" Type="PayrollModel.Salary" Multiplicity="*" />
+  </Association>
+  <Association Name="FK_Salary_Employee">
+    <End Type="PayrollModel.Employee" Role="Employee" Multiplicity="1" />
+    <End Type="PayrollModel.Salary" Role="Salary" Multiplicity="*" />
+  </Association>
+</Schema>
