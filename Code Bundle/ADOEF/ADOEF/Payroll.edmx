@@ -118,11 +118,11 @@
     <edmx:StorageModels>
       <Schema Namespace="PayrollModel.Store" Alias="Self" ProviderManifestToken="09.00.1399" xmlns="http://schemas.microsoft.com/ado/2006/04/edm/ssdl">
         <EntityContainer Name="dbo">
-          <EntitySet Name="Department" EntityType="PayrollModel.Store.Department" />
-          <EntitySet Name="Designation" EntityType="PayrollModel.Store.Designation" />
-          <EntitySet Name="Employee" EntityType="PayrollModel.Store.Employee" />
-          <EntitySet Name="ProvidentFund" EntityType="PayrollModel.Store.ProvidentFund" />
-          <EntitySet Name="Salary" EntityType="PayrollModel.Store.Salary" />
+          <EntitySet Name="Department" EntityType="PayrollModel.Store.Department" Table="Department"/>
+          <EntitySet Name="Designation" EntityType="PayrollModel.Store.Designation" Table="Designation"/>
+          <EntitySet Name="Employee" EntityType="PayrollModel.Store.Employee" Table="Employee"/>
+          <EntitySet Name="ProvidentFund" EntityType="PayrollModel.Store.ProvidentFund" Table="ProvidentFund"/>
+          <EntitySet Name="Salary" EntityType="PayrollModel.Store.Salary" Table="Salary"/>
           <AssociationSet Name="FK_Employee_Department" Association="PayrollModel.Store.FK_Employee_Department">
             <End Role="Department" EntitySet="Department" />
             <End Role="Employee" EntitySet="Employee" />
