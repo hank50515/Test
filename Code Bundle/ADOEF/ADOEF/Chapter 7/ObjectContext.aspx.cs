@@ -91,6 +91,7 @@ namespace ADOEF.Chapter_7
         {
             BinaryFormatter binaryFormatter = new BinaryFormatter();
             FileStream fileStream = new FileStream(fileName, FileMode.Open);
+			PayrollModel.Employee ct = new PayrollModel.Employee();
 
             try
             {
@@ -107,6 +108,11 @@ namespace ADOEF.Chapter_7
             {
                 fileStream.Close();
             }
+         }
+		 
+		 public Object Test(String fileName)
+        {
+            result.add(ct);
          }
      }
 }
