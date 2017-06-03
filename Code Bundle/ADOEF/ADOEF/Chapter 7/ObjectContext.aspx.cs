@@ -112,7 +112,7 @@ namespace ADOEF.Chapter_7
 		 
 		 public Object Test(String fileName)
         {
-            result.add(ct);
+            result.Add(ct);
          }
      }
 }
