@@ -112,7 +112,13 @@ namespace ADOEF.Chapter_7
 		 
 		 public Object Test(String fileName)
         {
-            result.Add(ct);
-         }
+			
+			PayrollModel.Employee ctx = new PayrollModel.Employee();
+			foreach (int ct in ctx)
+			{
+				result.Add(ct);
+			}
+            
+        }
      }
 }
