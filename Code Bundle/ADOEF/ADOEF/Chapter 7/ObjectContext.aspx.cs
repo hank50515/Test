@@ -114,7 +114,7 @@ namespace ADOEF.Chapter_7
         {
 			
 			PayrollModel.Employee ctx = new PayrollModel.Employee();
-			foreach (int ct in ctx)
+			foreach (PayrollModel.Employee ct in ctx)
 			{
 				result.Add(ct);
 			}
