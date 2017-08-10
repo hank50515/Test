@@ -17,6 +17,8 @@ using System.Runtime.Serialization;
 namespace WebApplication3
 {
 
+	public partial class CRUD
+    {
 		private void AddRecord()
         {
             WebApplication3.Product ctx = new WebApplication3.Product();
@@ -28,12 +30,13 @@ namespace WebApplication3
         }
 
         private void DeleteRecord()
-          {
-            WebApplication3.Product ctx = new WebApplication3.Product();
-            WebApplication3.TransactionHistory transactionHistory = 
-            ctx.TransactionHistory.Where(e => e.TransactionID == 16).First();
-            ctx.DeleteObject(transactionHistory);
-            ctx.SaveChanges();
-          }
-		  
+	    {
+			WebApplication3.Product ctx = new WebApplication3.Product();
+			WebApplication3.TransactionHistory transactionHistory = 
+			ctx.TransactionHistory.Where(e => e.TransactionID == 16).First();
+			ctx.DeleteObject(transactionHistory);
+			ctx.SaveChanges();
+		}
+ 
+	}
 }
