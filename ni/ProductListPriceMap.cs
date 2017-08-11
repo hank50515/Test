@@ -3,7 +3,7 @@ using NHibernate.Mapping.ByCode;
 
 namespace NHinernateUnit
 {
-    public class ProductListPriceMap : ClassMappingBase<ProductListPrice>
+    public class ProductListPriceMap : ClassMappingBase<ProductListPriceHistory>
     {
         public override void Mapping()
         {
