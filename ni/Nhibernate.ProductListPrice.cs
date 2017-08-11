@@ -25,13 +25,13 @@ namespace NHinernateUnit
 
         private int _ProductID;
 
-        private string _StartDate;
+        private date _StartDate;
 
-        private string _EndDate;
+        private date _EndDate;
 		
-		private string _ListPrice;
+		private int _ListPrice;
 		
-		private string _ModifiedDate;
+		private date _ModifiedDate;
     
 
         public ProductListPriceHistory()
