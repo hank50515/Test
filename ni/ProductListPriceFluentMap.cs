@@ -7,9 +7,9 @@ using GSS.ITSM.Model.Entities;
 namespace NHinernateUnit {
     
     
-    public class ScfunitemmMap : ClassMap<ProductListPriceHistory> {
+    public class ProductListPriceFluentMap : ClassMap<ProductListPriceHistory> {
         
-        public ScfunitemmMap() {
+        public ProductListPriceFluentMap() {
 			Table("ProductListPriceHistory");
 			LazyLoad();         
 
