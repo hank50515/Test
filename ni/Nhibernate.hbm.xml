@@ -17,5 +17,6 @@
 	<property name="ModifiedDate" type="datetime">
       <column name="ModifiedDate" not-null="false" length="20" />
     </property>
+	<property>
   </class>
 </hibernate-mapping>
