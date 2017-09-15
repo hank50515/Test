@@ -1,0 +1,17 @@
+<Context>
+
+	<Resource name="jdbc/ADM_PROD" 
+	          auth="Container" 
+	          type="javax.sql.DataSource"
+		      driverClassName="org.postgresql.Driver" 
+		      url="jdbc:postgresql://172.16.5.123:5432/gss_andromeda_t"
+		      username="gssadm" 
+		      password="adm@2014" 
+		      applicationName="ADM-PROD"
+		      maxIdle="30" 
+		      maxActive="100" 
+		      maxWait="10000" 
+		      initialSize="10" 
+		      />
+
+</Context>
