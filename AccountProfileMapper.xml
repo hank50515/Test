@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- $Id: AccountProfileMapper.xml 667 2017-03-28 01:00:49Z rex_wu $ -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="tw.gov.tipo.patkm.mapper.AccountProfileMapper">
+	<resultMap type="tw.gov.tipo.patkm.entity.AccountProfile" id="AccountProfile">
+		<id column="ID" jdbcType="INTEGER" property="id" />
+		<result column="COMPANY_NAME" jdbcType="VARBINARY" property="companyName" />
+		<result column="NAME" jdbcType="VARBINARY" property="name" />
+		<result column="EMAIL" jdbcType="VARBINARY" property="email" />
+		<result column="CONTACT_PHONE_NUMBER" jdbcType="VARBINARY" property="contactPhoneNumber" />
+		<result column="TYPE" jdbcType="CHAR" property="type" />
+		<result column="SYSTEM_ACCOUNT_ID" jdbcType="INTEGER" property="systemAccountId" />
+		<association property="industryTechnology" resultMap="IndustryTechnology"/>
+	</resultMap>
+	<resultMap type="tw.gov.tipo.patkm.entity.IndustryTechnology" id="IndustryTechnology">
+		<id column="INDUSTRY_TECHNOLOGY_ID" jdbcType="INTEGER" property="id" />
+		<result column="INDUSTRY_TECHNOLOGY_NAME" jdbcType="VARCHAR" property="name" />
+		<result column="DISPLAY_ORDER" jdbcType="TINYINT" property="displayOrder" />
+	</resultMap>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="accountProfile.id">
+		INSERT INTO
+			ACCOUNT_PROFILE (SYSTEM_ACCOUNT_ID, INDUSTRY_TECHNOLOGY_ID, COMPANY_NAME, NAME, EMAIL, CONTACT_PHONE_NUMBER, TYPE)
+		VALUES
+			(#{accountProfile.systemAccountId}, #{accountProfile.industryTechnology.id}, AES_ENCRYPT(#{accountProfile.companyName}, #{cifrado}), 
+				AES_ENCRYPT(#{accountProfile.name}, #{cifrado}), AES_ENCRYPT(#{accountProfile.email}, #{cifrado}), 
+				AES_ENCRYPT(#{accountProfile.contactPhoneNumber}, #{cifrado}), #{accountProfile.type})
+	</insert>
+
+	<update id="update">
+		UPDATE
+			ACCOUNT_PROFILE
+		SET
+			COMPANY_NAME = AES_ENCRYPT(#{accountProfile.companyName}, #{cifrado}), 
+			NAME = AES_ENCRYPT(#{accountProfile.name}, #{cifrado}), 
+			EMAIL = AES_ENCRYPT(#{accountProfile.email}, #{cifrado}), 
+			CONTACT_PHONE_NUMBER = AES_ENCRYPT(#{accountProfile.contactPhoneNumber}, #{cifrado}), 
+			TYPE = #{accountProfile.type}, 
+			INDUSTRY_TECHNOLOGY_ID = #{accountProfile.industryTechnology.id}
+		WHERE
+			ID = #{accountProfile.id}
+	</update>
+	
+	<delete id="deleteByKey">
+		DELETE FROM
+			ACCOUNT_PROFILE
+		WHERE
+			ID = #{id}
+	</delete>
+</mapper>
