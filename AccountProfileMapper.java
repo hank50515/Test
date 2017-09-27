@@ -22,6 +22,7 @@ public interface AccountProfileMapper {
 	/**
 	 * 依 {@link AccountProfile#getId() id} 查詢 {@linke Member 會員帳號}。
 	 */
+	@Select("SELECT * FROM ACCOUNT_PROFILE WHERE id = #{id}") 
 	public AccountProfile findByKey(@Param("id") BigDecimal id);
 
 	/**
