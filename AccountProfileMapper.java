@@ -28,10 +28,12 @@ public interface AccountProfileMapper {
 	/**
 	 * 修改 {@link AccountProfile 會員帳號}。
 	 */
+	@Select("CREATE PROCEDURE ACCOUNT_PROFILE")
 	public int update(@Param("accountProfile") AccountProfile accountProfile, @Param("cifrado") String cifrado);
 
 	/**
 	 * 刪除 {@link AccountProfile 會員帳號}。
 	 */
+	@Select("DROP VIEW ACCOUNT_PROFILE WHERE id = #{id}")
 	public int deleteByKey(@Param("id") BigDecimal id);
 	}
