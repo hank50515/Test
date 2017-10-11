@@ -1,5 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeFile="UCPMS_TrackingItem_Write_View.ascx.cs" Inherits="UserControl_UCPMS_TrackingItem_Write_View" %>
 <%@ Register Assembly="Ext.Net" Namespace="Ext.Net" TagPrefix="ext" %>
+<%@ Register TagPrefix="uc" TagName="PMSRdecView" Src="~/UserControl/PMS/PMS_TrackingItem_History.aspx" %> 
 <ext:Panel ID="PanContent" runat="server" AutoHeight="true" Title="" Border="false" HideBorders="true" >    
     <Content>
 <style type="text/css">
