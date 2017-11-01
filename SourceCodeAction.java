@@ -1,550 +1,502 @@
-admApp.controller('sourceCodeControl', 
-    function($modal, $scope, $http, $timeout, $anchorScroll, $window, $location, projectService) {
-	var NOT_CORRECT_RANGE = "選取範圍不正確，請重新選取。";
-	var WAIT_TO_LOAD_RELATIONSHIPS = "撈取程式碼關聯需要一些時間，請稍候。";
+package com.gss.adm.web.jsf.actions;
 
-	$scope.showInsertButton = false;
-    $scope.selectedInfo = {};
-    
-    $.blockUI();
-    projectService.getCurrentProject().then(function(project) {
-        if ( ! project ) {
-        	$.unblockUI();
-            return ;
-        }
-        
-        $scope.project = project;
-        
-        var entityId = $.url("?nodeId"),
-            gotoLineNumber = $.url("?gotoline");
-        if ( ! entityId) {
-        	$.unblockUI();
-            return;
-        }
-        
-        // load source code
-        $scope.lineIDPrefix = 'line-';
-        $scope.showCodeFlag = false;
-        var projectId = project.id;
-        var projectCode = project.code;
-        
-        //initialize the add relatio button
-        var $addRelationButton = $('.addRelationButton');
-        $addRelationButton.on('click', function(){
-        	$addRelationButton.hide();
-        	
-        	$modal.open({
-    			animation : true,
-    			backdrop:'static',
-    			templateUrl : 'addRelation-template',
-    			controller : 'ViewSourceCodeModalCtrl',
-    			size : 'lg',
-    			resolve: {
-    				selectedInfo: function () {
-    		          return $scope.selectedInfo;
-    		        }
-    		    }
-    		});
-        });
-        
-        var $sourceCodeMethodTree = $("#sourceCodeMethodTree");
-        
-        $timeout(function() {
-            
-            // load method, forward, backward info
-            $sourceCodeMethodTree.block();
-            $http({
-                url : getBaseUrl() + "/actions/sourceCode/project/" + projectId + "/entity/" + entityId + "/method/tree",
-                method : "GET",
-            }).success(function(data, status, headers, config) {
-            	$scope.entityName = data[0].name;
-            	
-                // initial method tree view
-                var $sourceCodeMethodTree = $("#sourceCodeMethodTree");
-                var $sourceCodeMethodTreeView = $sourceCodeMethodTree.kendoTreeView({
-                    template: kendo.template($("#treeview-template").html()),
-                    select: function(e) {
-                        var selectItem = $sourceCodeMethodTreeView.dataItem(e.node);
-                        _gotoSelectedMethod(selectItem);
-                    },
-                    dataSource: new kendo.data.HierarchicalDataSource({
-                        data: data
-                    })
-                }).data("kendoTreeView");
-                
-                // initial method icon tooltip
-                _initialMehodForwardTooltip($sourceCodeMethodTreeView);
-                _initialMethodBackwardTooltip($sourceCodeMethodTreeView);
-                
-                $scope.showInsertButton = true;
-            }).error(function(data, status, headers, config){
-            	 $sourceCodeMethodTree.unblock();
-            	 MessageBox.error(data);
-            });
-            
-            // load source code text
-            $(".sourceCodeContentMainContent").block();
-            $http({
-                url : getBaseUrl() + "/actions/sourceCode/project/" + projectId + "/entity/" + entityId + "/all",
-                method : "GET"
-            }).success(function(data, status, headers, config) {
-            	$scope.syntaxHighlightExtensionName = data.syntaxHighlightExtensionName;
-            	$scope.sourceCodeContent = data.sourceCode;
+import static com.gss.adm.api.enums.ProjectDefinitions.REPOSITORY_TYPE_GIT;
+import static com.gss.adm.api.enums.ProjectDefinitions.REPOSITORY_TYPE_SVN;
+import static com.gss.adm.api.enums.ProjectDefinitions.REPOSITORY_TYPE_TFS;
 
-            	$timeout(function() {
-            		
-                    SyntaxHighlighter.defaults['quick-code'] = false;
-                    SyntaxHighlighter.defaults['toolbar'] = false;
-                    SyntaxHighlighter.highlight();
-                    
-                    $scope.showCodeFlag = true;
-                    _bindIconSpace();
-                    
-                    MessageBox.info(WAIT_TO_LOAD_RELATIONSHIPS);
-                    // load forward, backward line number
-                    $(".triangleContent").block();
-                    $http({
-                        url : getBaseUrl() + "/actions/sourceCode/project/" + projectId + "/entity/" + entityId,
-                        method : "GET"
-                    }).success(function(data, status, headers, config) {
-                        _bindIcon(data);
-                        
-                        if ( gotoLineNumber ) { 
-                    		_gotoLineNumber(gotoLineNumber);
-                    	}
-                    	
-                    	var word = $.url("?q");
-                		if (word){
-                			_gotoHightLightKeyword(word);
-                		}
-                    }).error(function(data, status, headers, config) {
-                        MessageBox.error(FILE_NOT_FOUND);
-                        
-                    }).finally(function(e) {
-                    	$(".triangleContent").unblock();
-                    });
-                    
-                    $(".line").mouseup(function(event){
-                    	$('.addRelationButton').hide();
-                    	$timeout(function(){
-                    		var selection = window.getSelection();
-                    		if(selection.type == "Range") {
-                    			var y = event.pageY - $("#sourceCodeContent").offset().top;
-                    			var x = event.pageX - $("#sourceCodeContent").offset().left;
-                    			$scope.selectedInfo = _prepareSelectedInfo();
-                    			
-                    			if($scope.selectedInfo != undefined) {
-                    				$('.addRelationButton').css("left", (x + 10)  + "px").css("top", (y + 10) + "px");
-                    				$('.addRelationButton').show();
-                    			} else {
-                    				MessageBox.error(NOT_CORRECT_RANGE);
-                    			}
-                    		} else {
-                    			$('.addRelationButton').hide();
-                    		}
-                    	}, 100);
-                    });
-                }, 100);
-            }).error(function(data, status, headers, config) {
-                MessageBox.error(FILE_NOT_FOUND);
-            }).finally(function(e) {
-            	$(".sourceCodeContentMainContent").unblock();            	
-            });
-        }, 500);
-        
-        function _getLineNumberFromNode($node){
-        	try{
-        		var classes = $node.attr("class").split(" ");
-        		for(var i = 0; i< classes.length; i++) {
-        			var classValue = classes[i];
-        			if(classValue.indexOf("index") >= 0) {
-        				return Number(classValue.replace("index", ""));
-        			}
-        		}
-        		
-        		return -1
-        	} catch (err) {
-        		return -1;
-        	}
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.gss.adm.api.constant.ModelDefinitions;
+import com.gss.adm.api.enums.ModelAttributeNameEnum;
+import com.gss.adm.api.enums.ProjectDefinitions;
+import com.gss.adm.api.model.vo.RelationDetail;
+import com.gss.adm.core.model.EntityRelationship;
+import com.gss.adm.core.model.Enttity;
+import com.gss.adm.core.model.ModelAttribute;
+import com.gss.adm.core.model.SourceCodeDiffText;
+import com.gss.adm.core.model.vo.SourceCodeMethodDto;
+import com.gss.adm.core.service.ChangeAnalysisService;
+import com.gss.adm.core.service.EntityRelationService;
+import com.gss.adm.core.service.EntityService;
+import com.gss.adm.web.view.RelationDetailView;
+import com.gss.adm.web.view.SourceCodeDiffTextView;
+import com.gss.adm.web.view.SourceCodePureTextView;
+import com.gss.adm.web.view.SourceCodeTextView;
+import com.gss.adm.web.view.SourceCodeTreeView;
+import com.gss.adm.web.view.convert.RelationDetailViewConverter;
+import com.gss.adm.web.view.convert.SourceCodeDiffTextViewConverter;
+import com.gss.adm.web.view.convert.SourceCodePureTextViewConverter;
+import com.gss.adm.web.view.convert.SourceCodeTextViewConverter;
+import com.gss.adm.web.view.convert.SourceCodeTreeViewConverter;
+import com.gss.tds.common.converter.GsonConverter;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * @author Taoyu_Wu
+ */
+@Slf4j
+@Component
+@Path("sourceCode")
+public class SourceCodeAction implements ModelDefinitions {
+
+	@Autowired
+	private EntityService entityService;
+
+	@Autowired
+	private EntityRelationService entityRelationService;
+
+	@Autowired
+	private ChangeAnalysisService changeAnalysisService;
+
+	@Autowired
+	private SourceCodeTextViewConverter sourceCodeTextViewConverter;
+
+	@Autowired
+	private SourceCodePureTextViewConverter sourceCodePureTextViewConverter;
+
+	@Autowired
+	private SourceCodeTreeViewConverter sourceCodeTreeViewConverter;
+
+	@Autowired
+	private SourceCodeDiffTextViewConverter sourceCodeDiffTextViewConverter;
+
+	@Autowired
+	private RelationDetailViewConverter relationDetailViewConverter;
+
+	@GET
+	@Path("project/{projectId}/entity/{entityId}")
+	public SourceCodeTextView showSourceCodeText(@PathParam("projectId") Long projectId,
+			@PathParam("entityId") Integer entityId) {
+
+		log.debug("projectId: {}, EntityId: {}", projectId, entityId);
+
+		Enttity entity = entityService.getEntityByProjectIdAndEntityId(projectId, entityId);
+		if (entity == null) {
+			throw new IllegalArgumentException("The entity can not be null");
 		}
-        
-        function _prepareSelectedInfo() {
-			var selection = window.getSelection();
-			
-			var $startNode = $(selection.anchorNode.parentElement).closest('.line');
-			var $stopNode = $(selection.extentNode.parentElement).closest('.line');
-			
-			var startLine = _getLineNumberFromNode($startNode);
-			var stopLine = _getLineNumberFromNode($stopNode);
-			
-			if(startLine < 0 || stopLine < 0) {
-				return;
+
+		try {
+			SourceCodeTextView sourceCodeView = sourceCodeTextViewConverter.convert(entity);
+
+			return sourceCodeView;
+		} catch (Exception e) {
+			log.debug("get source code {} exception {}", entityId, e);
+			throw new IllegalArgumentException("load source failed.");
+		}
+	}
+
+	@GET
+	@Path("project/{projectId}/entity/{entityId}/all")
+	public SourceCodePureTextView showAllSourceCodeText(@PathParam("projectId") Long projectId,
+			@PathParam("entityId") Integer entityId) {
+
+		log.debug("projectId: {}, EntityId: {}", projectId, entityId);
+
+		Enttity entity = entityService.getEntityByProjectIdAndEntityId(projectId, entityId);
+		if (entity == null) {
+			throw new IllegalArgumentException("The entity can not be null");
+		}
+
+		SourceCodePureTextView convertAll = sourceCodePureTextViewConverter.convertAll(entity);
+		if(convertAll == null){
+			throw new IllegalArgumentException("The sourceCodePureTextView can not be null");
+		}
+		
+		return convertAll;
+	}
+
+	@GET
+	@Path("project/{projectId}/entity/{entityId}/firstLine/{firstLineNumber}/interval/{intervalLine}/fewSourceCode")
+	public SourceCodePureTextView showFewSourceCodeText(@PathParam("projectId") Long projectId,
+			@PathParam("entityId") Integer entityId, @PathParam("firstLineNumber") Integer firstLineNumber,
+			@PathParam("intervalLine") Integer intervalLine) {
+
+		log.debug("projectId: {}, EntityId: {}, firstLine: {}, intervalLine: {}", projectId, entityId, firstLineNumber,
+				intervalLine);
+
+		Enttity entity = entityService.getEntityByProjectIdAndEntityId(projectId, entityId);
+		if (entity == null) {
+			throw new IllegalArgumentException("The entity can not be null");
+		}
+
+		try {
+			SourceCodePureTextView sourceCodeView = sourceCodePureTextViewConverter.convert(entity, firstLineNumber,
+					intervalLine);
+
+			return sourceCodeView;
+		} catch (Exception e) {
+			log.debug("get source code {} exception {}", entityId, e);
+			throw new IllegalArgumentException("load source failed.");
+		}
+	}
+
+	@GET
+	@Path("project/{projectId}/parent/{parentId}/parentLineNumber/{parentLineNumber}/self/{selfId}/selfLineNumber/{selfLineNumber}/highlight")
+	public List<Integer> findParentHighlightLineNumbers(@PathParam("projectId") Long projectId,
+			@PathParam("parentId") Integer parentId, @PathParam("parentLineNumber") Integer parentLineNumber,
+			@PathParam("selfId") Integer selfId, @PathParam("selfLineNumber") Integer selfLineNumber) {
+
+		if (selfLineNumber < 0) {
+			return Lists.newArrayList(parentLineNumber);
+		}
+
+		Enttity parent = entityService.getEntityByProjectIdAndEntityId(projectId, parentId);
+		if (parent == null) {
+			throw new IllegalArgumentException("Parent can not be null");
+		}
+
+		Enttity self = entityService.getEntityByProjectIdAndEntityId(projectId, selfId);
+		if (self == null) {
+			throw new IllegalArgumentException("Self can not be null");
+		}
+
+		List<Integer> highlightLineNumbers = Lists.newArrayList();
+
+		List<EntityRelationship> relations = entityRelationService.findRelationByTargetIdAndSourceId(projectId, selfId,
+				parentId);
+
+		boolean isImplement = CollectionUtils.isEmpty(relations);
+
+		if (!isImplement) {
+			for (EntityRelationship relation : relations) {
+				String relationDetailValue = relation.getAttributeValue(RELATION_DETAIL);
+				@SuppressWarnings("unchecked")
+				List<Object> detailObjects = GsonConverter.toObject(relationDetailValue, List.class);
+				List<RelationDetail> details = GsonConverter.convert(detailObjects, RelationDetail.class);
+
+				for (RelationDetail detail : details) {
+					if (detail.getTargetLineNumber() == selfLineNumber) {
+						if (detail.getSourceMethodLineNumber() == parentLineNumber) {
+							highlightLineNumbers.add(detail.getSourceLineNumber());
+						}
+					}
+				}
+			}
+
+			if (CollectionUtils.isEmpty(highlightLineNumbers)) {
+				if (parentId.equals(selfId)) {
+					highlightLineNumbers.add(parentLineNumber);
+				}
+			}
+		} else {
+			highlightLineNumbers.add(parentLineNumber);
+		}
+
+		return highlightLineNumbers;
+	}
+
+	@GET
+	@Path("project/{projectId}/entity/{entityId}/method/tree")
+	public List<SourceCodeTreeView> findEntityMethodTree(@PathParam("projectId") Long projectId,
+			@PathParam("entityId") Integer entityId) throws IOException {
+		log.debug("projectId: {}, EntityId: {}", projectId, entityId);
+
+		Enttity entity = entityService.getEntityByProjectIdAndEntityId(projectId, entityId);
+		try {
+			SourceCodeTreeView methodRootNode = prepareMethodRootNode(entity);
+			if (methodRootNode == null) {
+				return Lists.newLinkedList();
+			}
+
+			List<SourceCodeTreeView> resultTree = Lists.newLinkedList();
+			CollectionUtils.addIgnoreNull(resultTree, methodRootNode);
+
+			SourceCodeTreeView forwardRootNode = prepareForwardRootNode(entity);
+			CollectionUtils.addIgnoreNull(resultTree, forwardRootNode);
+
+			SourceCodeTreeView backwardRootNode = prepareBackwardRootNode(entity);
+			CollectionUtils.addIgnoreNull(resultTree, backwardRootNode);
+
+			return resultTree;
+
+		} catch (Exception e) {
+			log.debug("get source code {} exception {}", entityId, e);
+			throw new IllegalArgumentException("load method tree failed.");
+		}
+	}
+
+	@GET
+	@Path("project/{projectId}/entity/{entityId}/forward/{forwardEntityId}/realtionDetail/")
+	public List<RelationDetailView> findForwardRelationDetail(@PathParam("projectId") Long projectId,
+			@PathParam("entityId") Integer entityId, @PathParam("forwardEntityId") Integer forwardEntityId) {
+
+		log.debug("projectId: {}, EntityId: {}, forwardEntityId: {}", projectId, entityId, forwardEntityId);
+
+		List<EntityRelationship> relationships = entityRelationService.findRelationshipBySourceId(projectId, entityId);
+
+		if (CollectionUtils.isEmpty(relationships)) {
+			return Lists.newArrayList();
+		}
+
+		List<RelationDetailView> views = relationDetailViewConverter.convertForwardAndFilterByEntity(relationships,
+				forwardEntityId);
+		sortBySourceLineNumber(views);
+
+		return views;
+	}
+
+	@GET
+	@Path("project/{projectId}/entity/{entityId}/backward/{backwardEntityId}/realtionDetail/")
+	public List<RelationDetailView> findBackwardRelationDetail(@PathParam("projectId") Long projectId,
+			@PathParam("entityId") Integer entityId, @PathParam("backwardEntityId") Integer backwardEntityId) {
+
+		log.debug("projectId: {}, EntityId: {}, backwardEntityId: {}", projectId, entityId, backwardEntityId);
+
+		List<EntityRelationship> relationships = entityRelationService.findRelationshipByTargetId(projectId, entityId);
+		if (CollectionUtils.isEmpty(relationships)) {
+			return Lists.newArrayList();
+		}
+
+		List<RelationDetailView> views = relationDetailViewConverter.convertBackwardAndFilterByEntity(relationships,
+				backwardEntityId);
+		sortByLineNumbers(views);
+
+		return views;
+	}
+
+	@GET
+	@Path("project/{projectId}/changeAnalysisId/{changeAnalysisId}/entityId/{entityId}/Revision/{revision}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<SourceCodeDiffTextView> findDiffByProjectAndEntityIdAndRevision(
+			@PathParam(value = "projectId") Long projectId,
+			@PathParam(value = "changeAnalysisId") Long changeAnalysisId, @PathParam(value = "entityId") int entityId,
+			@PathParam(value = "revision") String revision) {
+
+		List<SourceCodeDiffTextView> results = Lists.newArrayList();
+		Enttity entity = entityService.getEntityByEntityId(entityId);
+		String location = entity.getAttributeValue(ModelAttributeNameEnum.location.name());
+
+		String repositoryType = getRepositoryType(location);
+
+		try {
+			List<List<SourceCodeDiffTextView>> sourceCodeDiffTextViews = Lists.newArrayList();
+			List<SourceCodeDiffText> sourceCodeDiffTexts = Lists.newArrayList();
+			if (StringUtils.equals(repositoryType, ProjectDefinitions.REPOSITORY_TYPE_SVN.getName())) {
+				sourceCodeDiffTexts = changeAnalysisService.getDiffFromSVN(projectId, location, Long.valueOf(revision),
+						entity.getAttributeValue(ModelAttributeNameEnum.extension.name()));
+			} else if (StringUtils.equals(repositoryType, ProjectDefinitions.REPOSITORY_TYPE_GIT.getName())) {
+				sourceCodeDiffTexts = changeAnalysisService.getDiffFromGIT(projectId, changeAnalysisId, location,
+						revision, entity.getAttributeValue(ModelAttributeNameEnum.extension.name()));
+			} else if (StringUtils.equals(repositoryType, ProjectDefinitions.REPOSITORY_TYPE_TFS.getName())){
+				sourceCodeDiffTexts = changeAnalysisService.getDiffFromTFS(projectId, location, Integer.valueOf(revision),
+						entity.getAttributeValue(ModelAttributeNameEnum.extension.name()));
 			}
 			
-			if(stopLine < startLine) {
-				var temp = $startNode;
-				$startNode = $stopNode;
-				$stopNode = temp;
-				
-				temp = startLine;
-				startLine = stopLine;
-				stopLine = temp;
+			if (CollectionUtils.isNotEmpty(sourceCodeDiffTexts)) {
+				for (SourceCodeDiffText sourceCodeDiffText : sourceCodeDiffTexts) {
+					sourceCodeDiffTextViews.add(sourceCodeDiffTextViewConverter.convert(sourceCodeDiffText));
+				}
+				results = sourceCodeDiffTextViewConverter.merge(sourceCodeDiffTextViews);
 			}
-			
-			var startFullText = $startNode.text();
-			var stopFullText = $stopNode.text();
-			
-			var selectionString = selection.toString();
-			var selectionArr = selectionString.split("\n");
-			
-			var selectedStartText = selectionArr[0];
-			var selectedStopText = selectionArr[selectionArr.length - 1];
-			
-			var startIndex = startFullText.indexOf(selectedStartText);
-			var stopIndex = stopFullText.indexOf(selectedStopText) + selectedStopText.length;
-			
-			var selectedInfo = {};
-			selectedInfo.projectId = projectId;
-			selectedInfo.sourceEntityId = entityId;
-			selectedInfo.selectedText = selectionString;
-			selectedInfo.startLine = startLine;
-			selectedInfo.startIndex = startIndex;
-			selectedInfo.stopLine = stopLine;
-			selectedInfo.stopIndex = stopIndex;
-			
-			return selectedInfo;
+			return results;
+		} catch (Exception e) {
+			log.debug("Get diff of entity : {} error, cause {}", entityId, e);
 		}
-        
-        function _gotoSelectedMethod(entity) {
-            var line = (entity.startLine || 0),
-                redirect = entity.redirect;
-            
-            if ( ! line && ! redirect ) {
-                return ;
-            } else if ( redirect ) {
-                var nId = entity.id;
-                $window.open(getBaseUrl() + "/browse/" + projectCode + "/view_source_code.xhtml?nodeId=" + nId, '_blank');
-            }
-            
-            _gotoLineNumber(line);
-        };
-        
-        function _gotoLineNumber(line) {
-            var selectLineClassName = "selectLine";
-            $("." + selectLineClassName).toggleClass(selectLineClassName);
-            $(".number" + line).addClass(selectLineClassName);
-            
-            $location.hash(_getLineId(line));
-            $anchorScroll();
-        }
-        
-        function _bindIconSpace() {
-        	var $tr = $("#sourceCodeContent").find("tr"),
-            $backwardTd = $("<td class='triangleContent' />"),
-            $forwardTd  = $("<td class='triangleContent' />");
-        	
-        	$tr.prepend($forwardTd);
-        	$tr.prepend($backwardTd);
-        }
-        
-        function _bindIcon(data) {
-        	$("#sourceCodeContent .triangleContent").remove();
-        	
-            var $tr = $("#sourceCodeContent").find("tr"),
-                $backwardTd = $("<td class='triangleContent' />"),
-                $forwardTd  = $("<td class='triangleContent' />"),
-                backwardMap = data.backwardEntityMap || {},
-                forwardMap  = data.forwardEntityMap || {};
+		return results;
+	}
 
-            angular.forEach($(".gutter > div"), function(value, key) {
-                var line = key + 1;
-                
-                _appendBackwardIcon($backwardTd, backwardMap[line]);
-                _appendForwardIcon ($forwardTd,  forwardMap[line]);
-                _appendHashDiv($(value), line);
-            });
-            
-            $tr.prepend($forwardTd);
-        	$tr.prepend($backwardTd);
-        }
-        
-        function _appendBackwardIcon($backwardTd, backwardEntityInfo) {
-            if ( backwardEntityInfo ) {
-                var $icon = $("<div class='triangle-left'>◀</div>");
-                $backwardTd.append($icon);
-                
-//                if ( backwardEntityInfo.length == 1 ) {
-//                    $icon.click(function() {
-//                        PageUtils.openNewPage(_generateRelationEntityUrl(backwardEntityInfo[0]));
-//                    });
-//                } else {
-                    _initialSourceCodeBackwardTooltip($icon, backwardEntityInfo);
-//                }
-            } else {
-                $backwardTd.append("<div class='triangle-empty'>◀</div>");
-            }
-        }
-        
-        function _appendForwardIcon($forwardTd, forwardEntityInfo) {
-            if ( forwardEntityInfo ) {
-                var $icon = $("<div class='triangle-right'>▶</>");
-                $forwardTd.append($icon);
-                
-//                if ( forwardEntityInfo.length == 1 ) {
-//                    $icon.click(function() {
-//                        PageUtils.openNewPage(_generateRelationEntityUrl(forwardEntityInfo[0]));
-//                    });
-//                } else {
-                    _initialSourceCodeForwardTooltip($icon, forwardEntityInfo);
-//                }
-            } else {
-                $forwardTd.append("<div class='triangle-empty'>▶</>");
-            }
-        }
-        
-        function _generateRelationEntityUrl(entityInfo) {
-            var newUrl =
-                getBaseUrl() + "/browse/" + projectCode + "/view_source_code.xhtml?nodeId=" + entityInfo.entityId + "&gotoline=" + entityInfo.sourceLineNumber;
-            return newUrl;
-        }
-        
-        function _appendHashDiv($line, line) {
-            var $hashId = $("<div id='" + _getLineId(line) + "' />");
-            $line.before($hashId);
-        }
-        
-        function _initialMehodForwardTooltip($sourceCodeMethodTreeView) {
-            $sourceCodeMethodTree.on("click", ".tree-triangle-right", function(e) {
-                e.stopPropagation();
-                
-                var $triangleRightIcon = $(this);
-                var loaded = $triangleRightIcon.attr("loaded");
-                if ( String(loaded) == "true" ) {
-                    return ;
-                }
-                
-                var dataItem = $sourceCodeMethodTreeView.dataItem($triangleRightIcon.closest(".k-item"));
-                var forwardEntityId = dataItem.id;
-                
-                $sourceCodeMethodTree.block();
-                $http({
-                    url : getBaseUrl() + "/actions/sourceCode/project/" + projectId + "/entity/" + entityId + "/forward/" + forwardEntityId + "/realtionDetail/",
-                    method : "GET"
-                }).success(function(data, status, headers, config) {
-                    
-                    if ( typeof data[0] === 'undefined' ) {
-                        // empty data
-                        $triangleRightIcon.remove();
-                        MessageBox.warn(NO_DATA);
-                        return ;
-                    }
-                    
-                    var template = kendo.template($("#methodForwardLink-template").html());
-                    var $tooltip = $triangleRightIcon.kendoTooltip({
-                        autoHide: false,
-                        animation: false,
-                        position: "right",
-                        show: function(e) {
-                        	var $popup = $(this.popup.element);
-                        	_bindGoToLineEvents($popup);
-                        	
-                        	$popup.addClass("tooltipShift");
-                        },
-                        content: template({
-                        	projectCode: projectCode,
-                            entities: data,
-                            baseUrl: getBaseUrl()
-                        })
-                    }).data("kendoTooltip");
-                    $tooltip.show();
-                    
-                    $(document).on("mouseover", "a.forward", function(e) {
-                    	var lineNum = $(this).attr("line");
-                    	_gotoLineNumber(lineNum);
-                    });
-                    
-                    $triangleRightIcon.attr("loaded", true);
-                    
-                }).error(function(data, status, headers, config){
-                	MessageBox.error(data);
-                }).finally(function(e) {
-                    $sourceCodeMethodTree.unblock();
-                });
-            });
-        }
-        
-        function _initialMethodBackwardTooltip($sourceCodeMethodTreeView) {
-            $sourceCodeMethodTree.on("click", ".tree-triangle-left", function(e) {
-                e.stopPropagation();
-                
-                var $triangleLeftIcon = $(this);
-                var loaded = $triangleLeftIcon.attr("loaded");
-                if ( String(loaded) == "true" ) {
-                    return ;
-                }
-                
-                var dataItem = $sourceCodeMethodTreeView.dataItem($triangleLeftIcon.closest(".k-item"));
-                var backwardEntityId = dataItem.id;
-                
-                $sourceCodeMethodTree.block();
-                $http({
-                    url : getBaseUrl() + "/actions/sourceCode/project/" + projectId + "/entity/" + entityId + "/backward/" + backwardEntityId + "/realtionDetail/",
-                    method : "GET"
-                }).success(function(data, status, headers, config) {
-                    
-                    if ( typeof data[0] === 'undefined' ) {
-                        // empty data
-                        $triangleLeftIcon.remove();
-                        MessageBox.warn(NO_DATA);
-                        return ;
-                    }
-                    
-                    var template = kendo.template($("#methodBackwardLink-template").html());
-                    var $tooltip = $triangleLeftIcon.kendoTooltip({
-                        autoHide: false,
-                        animation: false,
-                        position: "right",
-                        show: function(e) {
-                        	var $popup = $(this.popup.element);
-                        	_bindGoToLineEvents($popup);
-                        	
-                        	$popup.addClass("tooltipShift");
-                        },
-                        content: template({
-                        	projectCode: projectCode,
-                            entities: data,
-                            baseUrl: getBaseUrl()
-                        })
-                    }).data("kendoTooltip");
-                    $tooltip.show();
-                    
-                    $(document).on("mouseover", "a.backward", function(e) {
-                    	var lineNum = $(this).attr("line");
-                    	_gotoLineNumber(lineNum);
-                    });
-                    
-                    $triangleLeftIcon.attr("loaded", true);
-                    
-                }).error(function(data, status, headers, config){
-                	MessageBox.error(data);
-                }).finally(function(e) {
-                    $sourceCodeMethodTree.unblock();
-                });
-            });
-        }
-        
-        function _initialSourceCodeForwardTooltip($icon, entities) {
-            var template = kendo.template($("#sourceCodeForwardLink-template").html());
-            $icon.kendoTooltip({
-                autoHide: false,
-                animation: false,
-                callout: true,
-                showOn: "click",
-                position: "bottom",
-                show: function(e) {
-                	var $popup = $(this.popup.element);
-                	_bindGoToLineEvents($popup);
-                },
-                content: template({
-                	projectCode: projectCode,
-                    entities: entities,
-                    baseUrl: getBaseUrl()
-                })
-            });
-        }
-        
-        function _initialSourceCodeBackwardTooltip($icon, entities) {
-        	var template = kendo.template($("#sourceCodeBackwardLink-template").html());
+	@GET
+	@Path("project/{projectId}/changeAnalysisId/{changeAnalysisId}/dependedEntityId/{dependedEntityId}/Revision/{revision}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public SourceCodePureTextView findByProjectAndDependedEntityIdAndRevision(
+			@PathParam(value = "projectId") Long projectId,
+			@PathParam(value = "changeAnalysisId") Long changeAnalysisId,
+			@PathParam(value = "dependedEntityId") int dependedEntityId,
+			@PathParam(value = "revision") String revision) {
+		Enttity dependedEntity = entityService.getEntityByEntityId(dependedEntityId);
+		String location = dependedEntity.getAttributeValue(ModelAttributeNameEnum.location.name());
+		String repositoryType = getRepositoryType(location);
 
-        	var entityId = parseInt($.url("?nodeId"));
-        	$icon.kendoTooltip({
-    			autoHide: false,
-    			animation: false,
-    			callout: true,
-    			showOn: "click",
-    			position: "bottom",
-    			show: function(e) {
-    				var $popup = $(this.popup.element);
-    				_bindGoToLineEvents($popup);
-    			},
-    			content: template({
-    				projectCode: projectCode,
-    				entities: entities,
-    				baseUrl: getBaseUrl()
-    			})
-    		});
-        }
-        
-        function _getLineId(index) {
-            return ($scope.lineIDPrefix + index);
-        }
+		try {
+			String historicalEntityContent = changeAnalysisService.getHistorycalEntityContent(projectId, changeAnalysisId, repositoryType,
+					revision, location);
+			SourceCodePureTextView sourceCodePureTextView = sourceCodePureTextViewConverter
+					.covertFromRepository(dependedEntity, historicalEntityContent);
 
-        function _bindGoToLineEvents($popup) {
-        	var entityId = parseInt($.url("?nodeId"));
-        	$popup.find('a').off("click");
-            $popup.find('a').click(function() {
-            	var tooltipEntityId = parseInt($(this).attr('entityId'));
-            	var lineNumber = parseInt($(this).attr('targetline'));
-            	if (! tooltipEntityId){
-            		return;
-            	}
-            	
-    			if(entityId == tooltipEntityId) {
-    				_gotoLineNumber(lineNumber);
-    				$popup.hide();
-    			} else {
-    				var projectCode = $scope.project.code;
-    				
-    				var sourceCodeUrl = getBaseUrl() + "/browse/" + projectCode
-    				+ "/view_source_code.xhtml?nodeId=" + tooltipEntityId
-    				+ "&gotoline=" + lineNumber;
-    				
-    				window.open(sourceCodeUrl, '_blank');
-    			}
-    		});
-            
-            $popup.find('a[entityId=' + entityId + ']').mouseover(function() {
-            	var lineNum = $(this).attr("line");
-            	_gotoLineNumber(lineNum);
-            });
+			return sourceCodePureTextView;
+		} catch (Exception e) {
+			log.debug("Get diff of entity : {} error, cause {}", dependedEntityId, e);
+		}
 
-            $popup.addClass("tooltipBackgroundDetail");
-        }
-        
-        function _gotoHightLightKeyword(word){
-    		//decoding
-    		word = decodeURIComponent(word);
-    		//replace + to space
-    		word = word.replace(/\+/g, " ");
-    			
-    		//set multi highlight
-    		var splitWords = [];
-    		splitWords = word.split(/\s+/);
-    		$(".highlightData").highlight(splitWords);
-            var hightLineData = $(".highlight").first().closest(".line");
-            if (hightLineData){
-            	var className = hightLineData.attr('class');
-            	var splitClassName = [];
-            	var splitClassName = className.split(/\s+/);
-            	if (splitClassName[0] == "line"){
-            		var lineNumber = splitClassName[1].replace("number", "");
-            		_gotoLineNumber(lineNumber);
-            	}
-            }
-        }
-    }, function(data) {
-		$.unblockUI();
-    	MessageBox.error(PROJECT_FAIL);
-    });
-    
-    $scope.addIntoCart = function() {
-    	var entityId = $.url("?nodeId");
-    	if(!entityId) {
-    		return;
-    	}
-    	
-    	entityId = Number(entityId);
-    	$(document).trigger("updateEntity", {id: entityId, name: $scope.entityName});
-    }
-    
-});
+		return new SourceCodePureTextView();
+	}
+	
+	@GET
+	@Path("project/{projectId}/changeAnalysisId/{changeAnalysisId}/methodName/{methodName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Integer findMethodStartLine(@PathParam("projectId") Long projectId,
+			@PathParam("changeAnalysisId") Long changeAnalysisId, @PathParam("methodName") String methodName) {
+		
+		Enttity entity = entityService.getEntityByEntityId(changeAnalysisId.intValue());
+		if(entity != null){
+			try {
+				List<SourceCodeMethodDto> methods = findEntityMethods(entity);
+				for(SourceCodeMethodDto method : methods){
+					if(StringUtils.equals(method.getMethodName(), methodName)){
+						return method.getStartLine();
+					}
+				}
+			} catch (Exception e) {
+				log.debug("Can't find entity methods, maybe entity is deleted.");
+				return null;
+			}
+		}
+
+		return null;
+	}
+
+	private String getRepositoryType(String location) {
+		Pattern svnPattern = Pattern.compile("(?i)\\W" + REPOSITORY_TYPE_SVN.getName() + "\\W");
+		Pattern gitPattern = Pattern.compile("(?i)\\W" + REPOSITORY_TYPE_GIT.getName() + "\\W");
+		Pattern tfsPattern = Pattern.compile("(?i)\\W" + REPOSITORY_TYPE_TFS.getName() + "\\W");
+
+		if (svnPattern.matcher(location).find()) {
+			return REPOSITORY_TYPE_SVN.getName();
+		} else if (gitPattern.matcher(location).find()) {
+			return REPOSITORY_TYPE_GIT.getName();
+		} else if (tfsPattern.matcher(location).find()){
+			return REPOSITORY_TYPE_TFS.getName();
+		}
+
+		return StringUtils.EMPTY;
+	}
+
+	private SourceCodeTreeView prepareMethodRootNode(Enttity rootEntity) throws Exception {
+
+		SourceCodeTreeView methodRootNode = sourceCodeTreeViewConverter.convert(rootEntity);
+		if (methodRootNode == null) {
+			return null;
+		}
+
+		List<SourceCodeMethodDto> entityMethods = findEntityMethods(rootEntity);
+		List<SourceCodeTreeView> methodNodes = sourceCodeTreeViewConverter.convert(entityMethods);
+		//根據開始行號做排序
+		Collections.sort(methodNodes, new Comparator<SourceCodeTreeView>() {
+			public int compare(SourceCodeTreeView o1, SourceCodeTreeView o2) {
+				return o1.getStartLine() - o2.getStartLine();
+			}
+		});
+		methodRootNode.setItems(methodNodes);
+
+		return methodRootNode;
+	}
+
+	private List<SourceCodeMethodDto> findEntityMethods(Enttity entity) throws Exception {
+
+		String attributeValue = entity.getAttributeValue(METHOD);
+		@SuppressWarnings("unchecked")
+		List<Object> sourceCodeMethodLists = GsonConverter.toObject(attributeValue, List.class);
+
+		return GsonConverter.convert(sourceCodeMethodLists, SourceCodeMethodDto.class);
+	}
+
+	private SourceCodeTreeView convertTreeNode(String name, Collection<SourceCodeTreeView> nodes) {
+		List<SourceCodeTreeView> nodeList = Lists.newArrayList(nodes);
+		SourceCodeTreeView mock = new SourceCodeTreeView();
+		mock.setName(name);
+		Collections.sort(nodeList);
+		mock.setItems(nodeList);
+		mock.setHasChildren(CollectionUtils.isNotEmpty(nodes));
+
+		return mock;
+	}
+
+	private SourceCodeTreeView prepareForwardRootNode(Enttity entity) {
+
+		List<EntityRelationship> targetRelationships = entity.getTargetEntityRelationships();
+		if (CollectionUtils.isEmpty(targetRelationships)) {
+			return null;
+		}
+
+		String FORWARD = "Forward";
+
+		Set<SourceCodeTreeView> nodes = Sets.newHashSet();
+		for (EntityRelationship relationship : targetRelationships) {
+
+			Enttity target = relationship.getTarget();
+			SourceCodeTreeView node = sourceCodeTreeViewConverter.convert(target);
+			if (node != null) {
+				node.setRedirect(true);
+				node.setForward(true);
+
+				nodes.add(node);
+			}
+		}
+
+		return convertTreeNode(FORWARD, nodes);
+	}
+
+	private SourceCodeTreeView prepareBackwardRootNode(Enttity entity) {
+
+		List<EntityRelationship> sourceRelationships = entity.getSourceEntityRelationships();
+		if (CollectionUtils.isEmpty(sourceRelationships)) {
+			return null;
+		}
+
+		String BACKWARD = "Backward";
+
+		Set<SourceCodeTreeView> nodes = Sets.newHashSet();
+		for (EntityRelationship relationship : sourceRelationships) {
+
+			Enttity source = relationship.getSource();
+			SourceCodeTreeView node = sourceCodeTreeViewConverter.convert(source);
+			if (node != null) {
+				node.setRedirect(true);
+				node.setBackward(true);
+
+				nodes.add(node);
+			}
+		}
+
+		return convertTreeNode(BACKWARD, nodes);
+	}
+
+	private void sortBySourceLineNumber(List<RelationDetailView> views) {
+		Collections.sort(views, new Comparator<RelationDetailView>() {
+			@Override
+			public int compare(RelationDetailView o1, RelationDetailView o2) {
+				return Integer.compare(o1.getSourceEntityLineNumber(), o2.getSourceEntityLineNumber());
+			}
+		});
+	}
+
+	private void sortByLineNumbers(List<RelationDetailView> views) {
+		Collections.sort(views, new Comparator<RelationDetailView>() {
+			@Override
+			public int compare(RelationDetailView o1, RelationDetailView o2) {
+				int o1TargetLine = o1.getTargetEntityLineNumber();
+				int o2TargetLine = o2.getTargetEntityLineNumber();
+
+				if (Integer.compare(o1TargetLine, o2TargetLine) != 0) {
+					return Integer.compare(o1TargetLine, o2TargetLine);
+				}
+
+				int o1SourceLine = o1.getSourceEntityLineNumber();
+				int o2SourceLine = o2.getSourceEntityLineNumber();
+
+				return Integer.compare(o1SourceLine, o2SourceLine);
+			}
+		});
+	}
+
+}
