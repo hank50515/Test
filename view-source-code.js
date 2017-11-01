@@ -72,11 +72,7 @@ admApp.controller('sourceCodeControl',
                     })
                 }).data("kendoTreeView");
                 
-                // initial method icon tooltip
-                _initialMehodForwardTooltip($sourceCodeMethodTreeView);
-                _initialMethodBackwardTooltip($sourceCodeMethodTreeView);
                 
-                $scope.showInsertButton = true;
             }).error(function(data, status, headers, config){
             	 $sourceCodeMethodTree.unblock();
             	 MessageBox.error(data);
