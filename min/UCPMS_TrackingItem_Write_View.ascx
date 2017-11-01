@@ -15,6 +15,9 @@
         <DirectEvents><Click OnEvent="BtnDownLoadFile_OnClick"></Click></DirectEvents>
     </ext:Button>
 </div>
+<div>
+123123
+</div>
 　
 </Content>
 </ext:Panel>
