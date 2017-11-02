@@ -410,19 +410,6 @@ public class ChangeAnalysisServiceImpl implements ChangeAnalysisService {
 	private Specification<ChangeAnalysis> getSpecificationCondition(Long projectId,
 			ChangeAnalysisQueryCondition changeAnalysisQueryCondition) {
 
-		String comment = changeAnalysisQueryCondition.getComment();
-		String commiter = changeAnalysisQueryCondition.getAuthor();
-		String revision = changeAnalysisQueryCondition.getRevision();
-		Date startDate = changeAnalysisQueryCondition.getStartDate();
-		Date endDate = changeAnalysisQueryCondition.getEndDate();
-		
-		ChangeAnalysisCondition searchCondition = new ChangeAnalysisCondition();
-		searchCondition.setProjectId(projectId);
-		searchCondition.setStartDate(startDate);
-		searchCondition.setEndDate(endDate);
-		searchCondition.setCommiter(commiter);
-		searchCondition.setComment(comment);
-		searchCondition.setRevision(revision);
 		
 		return searchCondition.getSpecification();
 	}
