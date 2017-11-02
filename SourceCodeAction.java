@@ -275,47 +275,6 @@ public class SourceCodeAction implements ModelDefinitions {
 	}
 
 	@GET
-	@Path("project/{projectId}/changeAnalysisId/{changeAnalysisId}/entityId/{entityId}/Revision/{revision}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<SourceCodeDiffTextView> findDiffByProjectAndEntityIdAndRevision(
-			@PathParam(value = "projectId") Long projectId,
-			@PathParam(value = "changeAnalysisId") Long changeAnalysisId, @PathParam(value = "entityId") int entityId,
-			@PathParam(value = "revision") String revision) {
-
-		List<SourceCodeDiffTextView> results = Lists.newArrayList();
-		Enttity entity = entityService.getEntityByEntityId(entityId);
-		String location = entity.getAttributeValue(ModelAttributeNameEnum.location.name());
-
-		String repositoryType = getRepositoryType(location);
-
-		try {
-			List<List<SourceCodeDiffTextView>> sourceCodeDiffTextViews = Lists.newArrayList();
-			List<SourceCodeDiffText> sourceCodeDiffTexts = Lists.newArrayList();
-			if (StringUtils.equals(repositoryType, ProjectDefinitions.REPOSITORY_TYPE_SVN.getName())) {
-				sourceCodeDiffTexts = changeAnalysisService.getDiffFromSVN(projectId, location, Long.valueOf(revision),
-						entity.getAttributeValue(ModelAttributeNameEnum.extension.name()));
-			} else if (StringUtils.equals(repositoryType, ProjectDefinitions.REPOSITORY_TYPE_GIT.getName())) {
-				sourceCodeDiffTexts = changeAnalysisService.getDiffFromGIT(projectId, changeAnalysisId, location,
-						revision, entity.getAttributeValue(ModelAttributeNameEnum.extension.name()));
-			} else if (StringUtils.equals(repositoryType, ProjectDefinitions.REPOSITORY_TYPE_TFS.getName())){
-				sourceCodeDiffTexts = changeAnalysisService.getDiffFromTFS(projectId, location, Integer.valueOf(revision),
-						entity.getAttributeValue(ModelAttributeNameEnum.extension.name()));
-			}
-			
-			if (CollectionUtils.isNotEmpty(sourceCodeDiffTexts)) {
-				for (SourceCodeDiffText sourceCodeDiffText : sourceCodeDiffTexts) {
-					sourceCodeDiffTextViews.add(sourceCodeDiffTextViewConverter.convert(sourceCodeDiffText));
-				}
-				results = sourceCodeDiffTextViewConverter.merge(sourceCodeDiffTextViews);
-			}
-			return results;
-		} catch (Exception e) {
-			log.debug("Get diff of entity : {} error, cause {}", entityId, e);
-		}
-		return results;
-	}
-
-	@GET
 	@Path("project/{projectId}/changeAnalysisId/{changeAnalysisId}/dependedEntityId/{dependedEntityId}/Revision/{revision}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public SourceCodePureTextView findByProjectAndDependedEntityIdAndRevision(
@@ -419,6 +378,47 @@ public class SourceCodeAction implements ModelDefinitions {
 		mock.setHasChildren(CollectionUtils.isNotEmpty(nodes));
 
 		return mock;
+	}
+	
+	@GET
+	@Path("project/{projectId}/changeAnalysisId/{changeAnalysisId}/entityId/{entityId}/Revision/{revision}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<SourceCodeDiffTextView> findDiffByProjectAndEntityIdAndRevision(
+			@PathParam(value = "projectId") Long projectId,
+			@PathParam(value = "changeAnalysisId") Long changeAnalysisId, @PathParam(value = "entityId") int entityId,
+			@PathParam(value = "revision") String revision) {
+
+		List<SourceCodeDiffTextView> results = Lists.newArrayList();
+		Enttity entity = entityService.getEntityByEntityId(entityId);
+		String location = entity.getAttributeValue(ModelAttributeNameEnum.location.name());
+
+		String repositoryType = getRepositoryType(location);
+
+		try {
+			List<List<SourceCodeDiffTextView>> sourceCodeDiffTextViews = Lists.newArrayList();
+			List<SourceCodeDiffText> sourceCodeDiffTexts = Lists.newArrayList();
+			if (StringUtils.equals(repositoryType, ProjectDefinitions.REPOSITORY_TYPE_SVN.getName())) {
+				sourceCodeDiffTexts = changeAnalysisService.getDiffFromSVN(projectId, location, Long.valueOf(revision),
+						entity.getAttributeValue(ModelAttributeNameEnum.extension.name()));
+			} else if (StringUtils.equals(repositoryType, ProjectDefinitions.REPOSITORY_TYPE_GIT.getName())) {
+				sourceCodeDiffTexts = changeAnalysisService.getDiffFromGIT(projectId, changeAnalysisId, location,
+						revision, entity.getAttributeValue(ModelAttributeNameEnum.extension.name()));
+			} else if (StringUtils.equals(repositoryType, ProjectDefinitions.REPOSITORY_TYPE_TFS.getName())){
+				sourceCodeDiffTexts = changeAnalysisService.getDiffFromTFS(projectId, location, Integer.valueOf(revision),
+						entity.getAttributeValue(ModelAttributeNameEnum.extension.name()));
+			}
+			
+			if (CollectionUtils.isNotEmpty(sourceCodeDiffTexts)) {
+				for (SourceCodeDiffText sourceCodeDiffText : sourceCodeDiffTexts) {
+					sourceCodeDiffTextViews.add(sourceCodeDiffTextViewConverter.convert(sourceCodeDiffText));
+				}
+				results = sourceCodeDiffTextViewConverter.merge(sourceCodeDiffTextViews);
+			}
+			return results;
+		} catch (Exception e) {
+			log.debug("Get diff of entity : {} error, cause {}", entityId, e);
+		}
+		return results;
 	}
 
 	private SourceCodeTreeView prepareForwardRootNode(Enttity entity) {
