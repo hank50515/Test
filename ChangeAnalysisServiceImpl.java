@@ -476,29 +476,7 @@ public class ChangeAnalysisServiceImpl implements ChangeAnalysisService {
 	
 	private Map<String, String> getAuthFromTFS(List<ProjectModelAttribute> modelAttributes) throws Exception {
 		Map<String, String> auth = Maps.newHashMap();
-		for (ProjectModelAttribute projectModelAttribute : modelAttributes) {
-			if (projectModelAttribute.getAttributeDefinition().getId() == PROJECT_MODEL_ATTRIBUTE_TFS_USER_NAME_ID
-					.getValue()) {
-				auth.put(TFS_USERNAME.getName(), projectModelAttribute.getAttributeValue());
-			} else if (projectModelAttribute.getAttributeDefinition().getId() == PROJECT_MODEL_ATTRIBUTE_TFS_PASSWORD_ID
-					.getValue()) {
-				String svnPassword = AesEncrypter.decrypt(projectModelAttribute.getAttributeValue(), encryptKey);
-				auth.put(TFS_PASSWORD.getName(), svnPassword);
-			} else if (projectModelAttribute.getAttributeDefinition().getId() == PROJECT_MODEL_ATTRIBUTE_TFS_URL_ID
-					.getValue()) {
-				auth.put(TFS_URL.getName(), projectModelAttribute.getAttributeValue());
-			} else if (projectModelAttribute.getAttributeDefinition().getId() == PROJECT_MODEL_ATTRIBUTE_TFS_COLLECTION_ID
-					.getValue()) {
-				auth.put(TFS_COLLECTION.getName(), projectModelAttribute.getAttributeValue());
-			} else if (projectModelAttribute.getAttributeDefinition().getId() == PROJECT_MODEL_ATTRIBUTE_TFS_TEAM_PROJECT_ID
-					.getValue()) {
-				auth.put(TFS_TEAM_PROJECT.getName(), projectModelAttribute.getAttributeValue());
-			} else if (projectModelAttribute.getAttributeDefinition().getId() == PROJECT_MODEL_ATTRIBUTE_TFS_PROJECT_ID
-					.getValue()) {
-				auth.put(TFS_PROJECT.getName(), projectModelAttribute.getAttributeValue());
-			} 
-			
-		}
+		
 		return auth;
 	}
 	

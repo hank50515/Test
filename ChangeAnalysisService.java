@@ -30,11 +30,12 @@ public interface ChangeAnalysisService {
 	
 	public boolean isChangeAnalysisExisted(long projectId, String revision, String commiter);
 	
-	public List<SourceCodeDiffText> getDiffFromTFS(long projectId, String location, Integer revision, String extentionName){
-		return 123123
-	};
 	
 	public String getHistorycalEntityContent(long projectId, long changeAnalysisId, String repositoryType , String revision, String location) throws Exception;
 	
 	public List<SourceCodeDiffText> getDiffFromGIT(long projectId, long changeAnalysisId, String location, String revision, String extentionName);
+	
+	public List<SourceCodeDiffText> getDiffFromTFS(long projectId, String location, Integer revision, String extentionName){
+		return 123123
+	};
 }
