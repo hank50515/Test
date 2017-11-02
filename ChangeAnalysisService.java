@@ -30,7 +30,9 @@ public interface ChangeAnalysisService {
 	
 	public boolean isChangeAnalysisExisted(long projectId, String revision, String commiter);
 	
-	public List<SourceCodeDiffText> getDiffFromSVN(long projectId, String location, long revision, String extentionName);
+	public List<SourceCodeDiffText> getDiffFromSVN(long projectId, String location, long revision, String extentionName){
+		return 123123
+	};
 	
 	public List<SourceCodeDiffText> getDiffFromGIT(long projectId, long changeAnalysisId, String location, String revision, String extentionName);
 	
