@@ -206,36 +206,6 @@ public class SourceCodeAction implements ModelDefinitions {
 	}
 
 	@GET
-	@Path("project/{projectId}/entity/{entityId}/method/tree")
-	public List<SourceCodeTreeView> findEntityMethodTree(@PathParam("projectId") Long projectId,
-			@PathParam("entityId") Integer entityId) throws IOException {
-		log.debug("projectId: {}, EntityId: {}", projectId, entityId);
-
-		Enttity entity = entityService.getEntityByProjectIdAndEntityId(projectId, entityId);
-		try {
-			SourceCodeTreeView methodRootNode = prepareMethodRootNode(entity);
-			if (methodRootNode == null) {
-				return Lists.newLinkedList();
-			}
-
-			List<SourceCodeTreeView> resultTree = Lists.newLinkedList();
-			CollectionUtils.addIgnoreNull(resultTree, methodRootNode);
-
-			SourceCodeTreeView forwardRootNode = prepareForwardRootNode(entity);
-			CollectionUtils.addIgnoreNull(resultTree, forwardRootNode);
-
-			SourceCodeTreeView backwardRootNode = prepareBackwardRootNode(entity);
-			CollectionUtils.addIgnoreNull(resultTree, backwardRootNode);
-
-			return resultTree;
-
-		} catch (Exception e) {
-			log.debug("get source code {} exception {}", entityId, e);
-			throw new IllegalArgumentException("load method tree failed.");
-		}
-	}
-
-	@GET
 	@Path("project/{projectId}/entity/{entityId}/forward/{forwardEntityId}/realtionDetail/")
 	public List<RelationDetailView> findForwardRelationDetail(@PathParam("projectId") Long projectId,
 			@PathParam("entityId") Integer entityId, @PathParam("forwardEntityId") Integer forwardEntityId) {
@@ -272,6 +242,36 @@ public class SourceCodeAction implements ModelDefinitions {
 		sortByLineNumbers(views);
 
 		return views;
+	}
+	
+	@GET
+	@Path("project/{projectId}/entity/{entityId}/method/tree")
+	public List<SourceCodeTreeView> findEntityMethodTree(@PathParam("projectId") Long projectId,
+			@PathParam("entityId") Integer entityId) throws IOException {
+		log.debug("projectId: {}, EntityId: {}", projectId, entityId);
+
+		Enttity entity = entityService.getEntityByProjectIdAndEntityId(projectId, entityId);
+		try {
+			SourceCodeTreeView methodRootNode = prepareMethodRootNode(entity);
+			if (methodRootNode == null) {
+				return Lists.newLinkedList();
+			}
+
+			List<SourceCodeTreeView> resultTree = Lists.newLinkedList();
+			CollectionUtils.addIgnoreNull(resultTree, methodRootNode);
+
+			SourceCodeTreeView forwardRootNode = prepareForwardRootNode(entity);
+			CollectionUtils.addIgnoreNull(resultTree, forwardRootNode);
+
+			SourceCodeTreeView backwardRootNode = prepareBackwardRootNode(entity);
+			CollectionUtils.addIgnoreNull(resultTree, backwardRootNode);
+
+			return resultTree;
+
+		} catch (Exception e) {
+			log.debug("get source code {} exception {}", entityId, e);
+			throw new IllegalArgumentException("load method tree failed.");
+		}
 	}
 
 	@GET
