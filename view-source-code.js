@@ -165,10 +165,7 @@ admApp.controller('sourceCodeControl',
 		}
         
         function _prepareSelectedInfo() {
-			var selection = window.getSelection();
-			
-			var $startNode = $(selection.anchorNode.parentElement).closest('.line');
-			var $stopNode = $(selection.extentNode.parentElement).closest('.line');
+		
 			
 			var startLine = _getLineNumberFromNode($startNode);
 			var stopLine = _getLineNumberFromNode($stopNode);
