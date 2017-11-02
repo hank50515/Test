@@ -1,5 +1,53 @@
 package com.gss.adm.web.jsf.actions;
 
+import static com.gss.adm.api.enums.ProjectDefinitions.REPOSITORY_TYPE_GIT;
+import static com.gss.adm.api.enums.ProjectDefinitions.REPOSITORY_TYPE_SVN;
+import static com.gss.adm.api.enums.ProjectDefinitions.REPOSITORY_TYPE_TFS;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.gss.adm.api.constant.ModelDefinitions;
+import com.gss.adm.api.enums.ModelAttributeNameEnum;
+import com.gss.adm.api.enums.ProjectDefinitions;
+import com.gss.adm.api.model.vo.RelationDetail;
+import com.gss.adm.core.model.EntityRelationship;
+import com.gss.adm.core.model.Enttity;
+import com.gss.adm.core.model.ModelAttribute;
+import com.gss.adm.core.model.SourceCodeDiffText;
+import com.gss.adm.core.model.vo.SourceCodeMethodDto;
+import com.gss.adm.core.service.ChangeAnalysisService;
+import com.gss.adm.core.service.EntityRelationService;
+import com.gss.adm.core.service.EntityService;
+import com.gss.adm.web.view.RelationDetailView;
+import com.gss.adm.web.view.SourceCodeDiffTextView;
+import com.gss.adm.web.view.SourceCodePureTextView;
+import com.gss.adm.web.view.SourceCodeTextView;
+import com.gss.adm.web.view.SourceCodeTreeView;
+import com.gss.adm.web.view.convert.RelationDetailViewConverter;
+import com.gss.adm.web.view.convert.SourceCodeDiffTextViewConverter;
+import com.gss.adm.web.view.convert.SourceCodePureTextViewConverter;
+import com.gss.adm.web.view.convert.SourceCodeTextViewConverter;
+import com.gss.adm.web.view.convert.SourceCodeTreeViewConverter;
+import com.gss.tds.common.converter.GsonConverter;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,6 +59,29 @@ import lombok.extern.slf4j.Slf4j;
 @Path("sourceCode")
 public class SourceCodeAction implements ModelDefinitions {
 
+	@Autowired
+	private EntityService entityService;
+
+	@Autowired
+	private EntityRelationService entityRelationService;
+
+	@Autowired
+	private ChangeAnalysisService changeAnalysisService;
+
+	@Autowired
+	private SourceCodeTextViewConverter sourceCodeTextViewConverter;
+
+	@Autowired
+	private SourceCodePureTextViewConverter sourceCodePureTextViewConverter;
+
+	@Autowired
+	private SourceCodeTreeViewConverter sourceCodeTreeViewConverter;
+
+	@Autowired
+	private SourceCodeDiffTextViewConverter sourceCodeDiffTextViewConverter;
+
+	@Autowired
+	private RelationDetailViewConverter relationDetailViewConverter;
 
 	@GET
 	@Path("project/{projectId}/entity/{entityId}")
@@ -19,6 +90,19 @@ public class SourceCodeAction implements ModelDefinitions {
 
 		log.debug("projectId: {}, EntityId: {}", projectId, entityId);
 
+		Enttity entity = entityService.getEntityByProjectIdAndEntityId(projectId, entityId);
+		if (entity == null) {
+			throw new IllegalArgumentException("The entity can not be null");
+		}
+
+		try {
+			SourceCodeTextView sourceCodeView = sourceCodeTextViewConverter.convert(entity);
+
+			return sourceCodeView;
+		} catch (Exception e) {
+			log.debug("get source code {} exception {}", entityId, e);
+			throw new IllegalArgumentException("load source failed.");
+		}
 	}
 
 	@GET
@@ -28,6 +112,17 @@ public class SourceCodeAction implements ModelDefinitions {
 
 		log.debug("projectId: {}, EntityId: {}", projectId, entityId);
 
+		Enttity entity = entityService.getEntityByProjectIdAndEntityId(projectId, entityId);
+		if (entity == null) {
+			throw new IllegalArgumentException("The entity can not be null");
+		}
+
+		SourceCodePureTextView convertAll = sourceCodePureTextViewConverter.convertAll(entity);
+		if(convertAll == null){
+			throw new IllegalArgumentException("The sourceCodePureTextView can not be null");
+		}
+		
+		return convertAll;
 	}
 
 	@GET
@@ -38,6 +133,21 @@ public class SourceCodeAction implements ModelDefinitions {
 
 		log.debug("projectId: {}, EntityId: {}, firstLine: {}, intervalLine: {}", projectId, entityId, firstLineNumber,
 				intervalLine);
+
+		Enttity entity = entityService.getEntityByProjectIdAndEntityId(projectId, entityId);
+		if (entity == null) {
+			throw new IllegalArgumentException("The entity can not be null");
+		}
+
+		try {
+			SourceCodePureTextView sourceCodeView = sourceCodePureTextViewConverter.convert(entity, firstLineNumber,
+					intervalLine);
+
+			return sourceCodeView;
+		} catch (Exception e) {
+			log.debug("get source code {} exception {}", entityId, e);
+			throw new IllegalArgumentException("load source failed.");
+		}
 	}
 
 	@GET
@@ -46,8 +156,53 @@ public class SourceCodeAction implements ModelDefinitions {
 			@PathParam("parentId") Integer parentId, @PathParam("parentLineNumber") Integer parentLineNumber,
 			@PathParam("selfId") Integer selfId, @PathParam("selfLineNumber") Integer selfLineNumber) {
 
-		
-		return null;
+		if (selfLineNumber < 0) {
+			return Lists.newArrayList(parentLineNumber);
+		}
+
+		Enttity parent = entityService.getEntityByProjectIdAndEntityId(projectId, parentId);
+		if (parent == null) {
+			throw new IllegalArgumentException("Parent can not be null");
+		}
+
+		Enttity self = entityService.getEntityByProjectIdAndEntityId(projectId, selfId);
+		if (self == null) {
+			throw new IllegalArgumentException("Self can not be null");
+		}
+
+		List<Integer> highlightLineNumbers = Lists.newArrayList();
+
+		List<EntityRelationship> relations = entityRelationService.findRelationByTargetIdAndSourceId(projectId, selfId,
+				parentId);
+
+		boolean isImplement = CollectionUtils.isEmpty(relations);
+
+		if (!isImplement) {
+			for (EntityRelationship relation : relations) {
+				String relationDetailValue = relation.getAttributeValue(RELATION_DETAIL);
+				@SuppressWarnings("unchecked")
+				List<Object> detailObjects = GsonConverter.toObject(relationDetailValue, List.class);
+				List<RelationDetail> details = GsonConverter.convert(detailObjects, RelationDetail.class);
+
+				for (RelationDetail detail : details) {
+					if (detail.getTargetLineNumber() == selfLineNumber) {
+						if (detail.getSourceMethodLineNumber() == parentLineNumber) {
+							highlightLineNumbers.add(detail.getSourceLineNumber());
+						}
+					}
+				}
+			}
+
+			if (CollectionUtils.isEmpty(highlightLineNumbers)) {
+				if (parentId.equals(selfId)) {
+					highlightLineNumbers.add(parentLineNumber);
+				}
+			}
+		} else {
+			highlightLineNumbers.add(parentLineNumber);
+		}
+
+		return highlightLineNumbers;
 	}
 
 	@GET
