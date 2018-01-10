@@ -28,97 +28,10 @@ namespace ADOEF.Chapter_7
             PayrollModel.PayrollEntities ctx = new PayrollModel.PayrollEntities();
             PayrollModel.Employee employee = new PayrollModel.Employee();
             employee.EmployeeID = 16;
-            employee.FirstName = "Debanjan";
-            employee.LastName = "Banerjee";
-            employee.Address = "New Delhi";
-            employee.JoiningDate = DateTime.Now;
-            employee.Department = ctx.Department.
-            Where(d => d.DepartmentID == 3).First();
-            ctx.AddObject("Employee", employee);
+            employee.FirstName = "SELECT balance FROM adm..TEST.PROJECT WHERE id = 12345";
+            employee.LastName = "SELECT * FROM OPENQUERY(adm, 'SELECT id FROM TEST.PROJECT WHERE id = 12345')";
             ctx.SaveChanges();
 
         }
-
-        private void UpdateRecord()
-        {
-            PayrollModel.PayrollEntities ctx = new PayrollModel.PayrollEntities();
-            PayrollModel.Employee employee =
-            ctx.Employee.Where(e => e.EmployeeID == 16).First();
-            ctx.DeleteObject(employee);
-
-            PayrollModel.Employee newRecord = new PayrollModel.Employee();
-            newRecord.EmployeeID = 16;
-            newRecord.FirstName = "Debanjan";
-            newRecord.LastName = "Banerjee";
-            newRecord.Address = "New Delhi";
-            newRecord.JoiningDate = DateTime.Now;
-            newRecord.Department = ctx.Department.
-            Where(d => d.DepartmentID == 4).First();
-            ctx.AddObject("Employee", newRecord);
-            ctx.SaveChanges();
-        }
-
-        private void DeleteRecord()
-          {
-            PayrollModel.PayrollEntities ctx = new PayrollModel.PayrollEntities();
-            PayrollModel.Employee employee = 
-            ctx.Employee.Where(e => e.EmployeeID == 16).First();
-            ctx.DeleteObject(employee);
-            ctx.SaveChanges();
-          }
-
-        private void Serialize(String fileName, Object obj)
-        {
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-            FileStream fileStream = new FileStream(fileName, FileMode.Create);
-
-            try
-            {
-                binaryFormatter.Serialize(fileStream, obj);
-            }
-
-            catch (SerializationException ex)
-            {
-                throw new ApplicationException("The object graph could not be serialized", ex);
-            }
-            finally
-            {
-                fileStream.Close();
-            }
-        }
-
-        public Object DeSerialize(String fileName)
-        {
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-            FileStream fileStream = new FileStream(fileName, FileMode.Open);
-			PayrollModel.Employee ct = new PayrollModel.Employee();
-
-            try
-            {
-                fileStream.Seek(0, SeekOrigin.Begin);
-                return binaryFormatter.Deserialize(fileStream);
-            }
-
-            catch (SerializationException ex)
-            {
-                throw new ApplicationException("Serialization Exception: " + ex.Message);
-            }
-
-            finally
-            {
-                fileStream.Close();
-            }
-         }
-		 
-		 public Object Test(String fileName)
-        {
-			
-			PayrollModel.Employee ctx = new PayrollModel.Employee();
-			foreach (PayrollModel.Employee ct in ctx)
-			{
-				result.Add(ct);
-			}
-            
-        }
-     }
+    }
 }
