@@ -30,8 +30,8 @@ namespace ADOEF.Chapter_7
             employee.EmployeeID = 16;
             employee.FirstName = "SELECT balance FROM adm..TEST.PROJECT WHERE id = 12345";
             employee.LastName = "SELECT * FROM OPENQUERY(adm, 'SELECT id FROM TEST.PROJECT WHERE id = 12345')";
-			employee.LastName = "SELECT * FROM adm@remoteoffice:project;";
-			employee.LastName = "SELECT * FROM adm@remoteoffice:informix.project;";
+			employee.LastName = "SELECT * FROM adm@remoteoffice:project";
+			employee.LastName = "SELECT * FROM adm@remoteoffice:informix.project";
             ctx.SaveChanges();
 
         }
