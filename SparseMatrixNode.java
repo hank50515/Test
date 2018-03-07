@@ -19,16 +19,4 @@ public class SparseMatrixNode implements Serializable {
 	
 	private String code;
 
-	
-	private String identifier;
-
-	private String entityCode;
-
-	private String entityDefinitionName;
-
-	private Integer startLineNumber;
-
-	private Integer endLineNumber;
-
-	private boolean haveSource;
 }

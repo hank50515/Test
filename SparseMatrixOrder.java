@@ -131,24 +131,6 @@ public class SparseMatrixOrder implements Serializable {
 		return indexes;
 	}
 	
-	public Set<Integer> findIndexesByEntityIds(Collection<Integer> entityIds) {
-		Set<Integer> allIndexes = Sets.newHashSet();
-		for (Integer entityId : entityIds) {
-			Set<Integer> indexes = findIndexesByEntityId(entityId);
-			CollectionUtils2.addAllIgnoreNullOrEmpty(allIndexes, indexes);
-		}
-		
-		return allIndexes;
-	}
-	
-	public Integer getEntityIdByIndex(Integer index) {
-		SparseMatrixNode node = getNodeByIndex(index);
-		if(node == null) {
-			return null;
-		}
-		
-		return node.getEntityId();
-	}
 	
 	private Integer findCurrentMaxIndex() {
 		Set<Integer> unsortedIndexes = idIndexMap.values();
