@@ -27,15 +27,6 @@ public class SparseMatrixOrder implements Serializable {
 	
 	private static final int MAP_SIZE = 300000;
 
-	// Key: nodeId, Value: index
-	private HashBiMap<String, Integer> idIndexMap = HashBiMap.create(MAP_SIZE);
-
-	// Key: nodeId, Value: node
-	private Map<String, SparseMatrixNode> nodeMap = Maps.newHashMapWithExpectedSize(MAP_SIZE);
-
-	// Key: entityId, Value: nodeId
-	private Map<Integer, Set<String>> entityIdMap = Maps.newHashMapWithExpectedSize(MAP_SIZE);
-
 	public Integer getIndexById(String id) {
 		if (StringUtils.isBlank(id)) {
 			throw new IllegalArgumentException("Id is null.");
@@ -103,39 +94,6 @@ public class SparseMatrixOrder implements Serializable {
 		}
 	}
 	
-	public void insertIntoMaps(SparseMatrixNode node) {
-		String id = node.getId();
-		Integer index = getIndexById(id);
-		SparseMatrixNode nodeFromMap = getNodeById(id);
-
-		if (index == null && nodeFromMap == null) {
-			Integer entityId = node.getEntityId();
-			Integer currentMaxIndex = findCurrentMaxIndex();
-			int currentMapIndex = idIndexMap.size() - 1;
-
-			if (currentMaxIndex == currentMapIndex) {
-				idIndexMap.put(id, currentMapIndex + 1);
-			} else if(currentMaxIndex > currentMapIndex) {
-				for (int i = 0; i < currentMaxIndex; i++) {
-					if (idIndexMap.values().contains(i)) {
-						continue;
-					}
-
-					idIndexMap.put(id, i);
-
-					break;
-				}
-			}
-
-			nodeMap.put(id, node);
-
-			if (entityIdMap.get(entityId) == null) {
-				entityIdMap.put(entityId, Sets.newHashSet(id));
-			} else {
-				entityIdMap.get(entityId).add(id);
-			}
-		}
-	}
 	
 	public void removeByEntityId(Integer entityId) {
 		Set<String> nodeIds = entityIdMap.get(entityId);
