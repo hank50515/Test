@@ -19,9 +19,6 @@ public class SparseMatrixNode implements Serializable {
 	
 	private String code;
 
-	private Integer entityId;
-
-	private String entityName;
 	
 	private String identifier;
 
