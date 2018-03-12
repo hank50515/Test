@@ -22,5 +22,9 @@ public class SparseMatrixNode implements Serializable {
 	private Long projectId;
 	
 	private String code;
+	
+	private Long projectId;
+	
+	private String code;
 
 }
