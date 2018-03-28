@@ -14,12 +14,22 @@ import lombok.ToString;
 public class SparseMatrixNode implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+        
+	private Long projectId;
+	
+	private String code;
 
 	
 	private String code;
 	
+<<<<<<< HEAD
 	private String name;
 	
 	private String fileName;
+=======
+	private Long projectId;
+	
+	private String code;
+>>>>>>> origin/master
 
 }

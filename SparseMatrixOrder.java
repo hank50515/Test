@@ -22,6 +22,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SparseMatrixOrder implements Serializable {
+	
+	private Long projectId;
+	
+	private String code;
+	
+	private Long projectId;
+	
+	private String code;
+
 
 	private static final long serialVersionUID = 1L;
 	
