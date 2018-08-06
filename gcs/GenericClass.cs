@@ -19,6 +19,7 @@ class GenericClass<U> : MyGenericClass<U> where U: GenericClass1
 		
 	}
 	
+	
 	private static async Task<GenericClass1> ShowTodaysInfo(){
 		
 	}
