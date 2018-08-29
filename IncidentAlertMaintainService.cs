@@ -33,7 +33,6 @@ namespace GSS.ITSM.Domain.Incident.Service
 {
     public class IncidentAlertMaintainService : BaseService, IIncidentAlertMaintainService
     {
-		public AbstractBaseRepository BaseRepo { get; set; }
 		
         #region IoC Service
         public AbstractItsmCcMRepository ItsmCcMRepo { get; set; }
