@@ -50,7 +50,7 @@ namespace GSS.Radar.Core.Services.Domain.Persistence.Impl
         {
             SqlBuilder sb = new SqlBuilder(@"
                         select *
-                        from informixDbLink@remoteoffice:project "
+                        from adm@remoteoffice:project "
                 , SqlBuilder.ParamType.NHibernate)
                 .WhereScope(where =>
                 {
@@ -66,7 +66,7 @@ namespace GSS.Radar.Core.Services.Domain.Persistence.Impl
         {
             SqlBuilder sb = new SqlBuilder(@"
                         select *
-                        from informixDbLink@remoteoffice:informix.project "
+                        from adm@remoteoffice:informix.project "
                 , SqlBuilder.ParamType.NHibernate)
                 .WhereScope(where =>
                 {
