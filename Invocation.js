@@ -1,20 +1,24 @@
-function myFunction() {
-	document.getElementById("demo").style.color = "red";
+// Function Declaration
+function helloFunction() {
+	alert("Hello");
 }
 
-myFunction();
+helloFunction();
 
-var myFunction2 = new Function("a", "b", "return a * b");
+// Function Constructor
+var multiplicationFunction = new Function("a", "b", "return a * b");
 
-myFunction2();
+multiplicationFunction(5, 10);
 
-var myFunction3 = (x,y) => {
+// Arrow Function 
+var additionFunction = (x,y) => {
 	return x + y;
 }
 
-myFunction3();
+additionFunction(1, 2);
 
-var myObject = {
+// Object Method
+var person = {
 	firstName : "John",
 	lastName : "Doe",
 	fullName : function() {
@@ -22,23 +26,16 @@ var myObject = {
 	}
 }
 
-function myFunction4() {
-	myObject.fullName();
-}
+person.fullName();
 
-myObject.fullName();
-
-myFunction3.apply();
-
-myFunction3.call();
-
+// Function prototype
 employee.prototype.display = function(){
-	var emp = new employee();
-	emp.display();
+	alert("Hello World");
 }
 
 employee.display();
 
+// jQuery FN Extend
 jQuery.fn.extend({
 	check : function(){
 		return this.each(function(){
@@ -52,4 +49,4 @@ jQuery.fn.extend({
 	}
 });
 
-$("#abc").check();
+$("#checkBtn").check();
