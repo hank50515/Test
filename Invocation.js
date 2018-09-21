@@ -50,3 +50,5 @@ jQuery.fn.extend({
 });
 
 $("#checkBtn").check();
+
+hiFunction();

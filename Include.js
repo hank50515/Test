@@ -1,0 +1,3 @@
+function hiFunction() {
+	alert("Hello");
+}
