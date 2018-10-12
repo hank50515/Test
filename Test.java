@@ -1,7 +1,8 @@
 public class Test {
 	
 	private String getName(){
-		return "Hank";
+		String aa = "Hank_aaaaaa";
+		return aa;
 	}
 	
 	private void printInformation(){
