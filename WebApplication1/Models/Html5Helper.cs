@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System.Web;
+using System.Web.Mvc;
 using System.Web.Routing;
 
 public class Html5Helper
@@ -23,5 +24,12 @@ public class Html5Helper
     {
         get;
         private set;
+    }
+
+    public static IHtmlString GetMyName()
+    {
+        var tagBuilder = new TagBuilder("span");
+        tagBuilder.SetInnerText("Hello World");
+        return new HtmlString(tagBuilder.ToString());
     }
 }
