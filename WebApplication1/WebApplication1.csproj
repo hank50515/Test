@@ -138,6 +138,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Areas\project\Models\Html5Helper2.cs" />
+    <Compile Include="Areas\project\projectAreaRegistration.cs" />
+    <Compile Include="Areas\project\CustomProjectWebViewPage.cs" />
     <Compile Include="Models\Html5Extensions.cs" />
     <Compile Include="Models\Html5Helper.cs" />
     <Compile Include="CustomWebViewPage.cs" />
@@ -162,6 +165,8 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Areas\project\Views\web.config" />
+    <Content Include="Areas\project\Views\Home\project.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -194,6 +199,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\project\Controllers\" />
+    <Folder Include="Areas\project\Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
