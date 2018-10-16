@@ -2,14 +2,14 @@
 using System.Web.Mvc;
 using System.Web.Routing;
 
-public class Html5Helper
+public class Html5Helper2
 {
-    public Html5Helper(ViewContext viewContext,
+    public Html5Helper2(ViewContext viewContext,
     IViewDataContainer viewDataContainer)
     : this(viewContext, viewDataContainer, RouteTable.Routes)
     {
     }
-    public Html5Helper(ViewContext viewContext,
+    public Html5Helper2(ViewContext viewContext,
     IViewDataContainer viewDataContainer, RouteCollection routeCollection)
     {
         ViewContext = viewContext;
@@ -26,7 +26,7 @@ public class Html5Helper
         private set;
     }
 
-    public IHtmlString GetMyName()
+    public IHtmlString GetMyHelloWord()
     {
         var tagBuilder = new TagBuilder("span");
         tagBuilder.SetInnerText("Hello World");
