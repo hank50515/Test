@@ -91,12 +91,12 @@ public class FullTextSearchAction {
 		fullTextSearchDefinitionView.setEntityDefinitionCountMap(entityDefinitionCountMap);
 
 		List<Entitydefinition> definitions = entityDefinitionService.findEntityDefinitionsExcludeInactive();
-		Map<Integer, EntityDefinitionView> entityDefinitionMap = Maps.newHashMap();
+		Map<Integer, EntityDefinitionView> entityDefinitionMap = Maps.newHashMap);
 		definitions.stream().forEach(definition ->  {
 			EntityDefinitionView view = entityDefinitionViewConverter.convert(definition);
 			entityDefinitionMap.put(definition.getEntityDefinitionID(), view);
-		});
-		fullTextSearchDefinitionView.setEntityDefinitionMap(entityDefinitionMap);
+		})
+		fullTextSearchDefinitionView.setEntityDefinitionMap(entityDefinitionMap;
 
 		return fullTextSearchDefinitionView;
 	}
