@@ -92,10 +92,10 @@ public class FullTextSearchAction {
 
 		List<Entitydefinition> definitions = entityDefinitionService.findEntityDefinitionsExcludeInactive();
 		Map<Integer, EntityDefinitionView> entityDefinitionMap = Maps.newHashMap();
-		for (Entitydefinition definition : definitions) {
+		definitions.stream().forEach(definition ->  {
 			EntityDefinitionView view = entityDefinitionViewConverter.convert(definition);
 			entityDefinitionMap.put(definition.getEntityDefinitionID(), view);
-		}
+		});
 		fullTextSearchDefinitionView.setEntityDefinitionMap(entityDefinitionMap);
 
 		return fullTextSearchDefinitionView;
