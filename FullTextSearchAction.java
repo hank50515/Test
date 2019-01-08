@@ -187,8 +187,7 @@ public class FullTextSearchAction {
 				String encoding = FileUtils2.getEncoding(file);
 				contentScanner = new Scanner(file, encoding);
 
-				// 取得pattern為keyword的 的那行程式碼
-				for (String keyWord : keyWordAry) {
+				keyWordAry.stream().forEach(keyWord ->  { 
 					Pattern regexPattern = Pattern.compile("(?i)" + keyWord);
 					while (contentScanner.hasNextLine()) {
 						String lineContent = contentScanner.nextLine();
@@ -202,7 +201,8 @@ public class FullTextSearchAction {
 					if (StringUtils.isNotBlank(matchStr)) {
 						break;
 					}
-				}
+				}) 
+				// 取得pattern為keyword的 的那行程式碼
 			} catch (Exception e) {
 				log.debug("Scan file failed. {}", e);
 				return StringUtils.EMPTY;
