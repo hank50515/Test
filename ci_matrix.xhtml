@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<ui:composition template="/templates/template.xhtml">
+	<ui:define name="title">
+		<h:outputText value="#{msg['tab.header.title.ciMatrix']}" />
+	</ui:define>
+	<ui:define name="head">
+
+		<link rel="stylesheet" type="text/css"
+			href="${contextPath}/css/jquery.tipsy/tipsy.css" />
+		<link type="text/css" rel="stylesheet" href="${contextPath}/js/syntaxhighlighter/styles/shCoreDefault.css" />
+  		<link type="text/css" rel="stylesheet" href="${contextPath}/css/adm/syntaxhighlighter_override.css" />
+		<script type="text/javascript" src="${contextPath}/js/syntaxhighlighter/scripts/shCore.js"></script>
+
+		<!-- brushes -->
+		<script type="text/javascript" src="${contextPath}/js/syntaxhighlighter/scripts/shBrushJScript.js"></script>
+		<script type="text/javascript" src="${contextPath}/js/syntaxhighlighter/scripts/shBrushJava.js"></script>
+		<script type="text/javascript" src="${contextPath}/js/syntaxhighlighter/scripts/shBrushCSharp.js"></script>
+		<script type="text/javascript" src="${contextPath}/js/syntaxhighlighter/scripts/shBrushSql.js"></script>
+		<script type="text/javascript" src="${contextPath}/js/syntaxhighlighter/scripts/shBrushXml.js"></script>
+		<script type="text/javascript" src="${contextPath}/js/syntaxhighlighter/scripts/shBrushVb.js"></script>
+
+		<script src="${contextPath}/js/jquery.scrollTo/jquery.scrollTo.min.js" />
+
+		<script type="text/javascript" src="${contextPath}/js/adm/directive/ngMatrixLegend.js?${currentVersion}"></script>
+		<script type="text/javascript" src="${contextPath}/js/adm/directive/ngLegendSwitch.js?${currentVersion}"></script>
+
+		<script src="${contextPath}/js/adm-widget/ciDefinitionSelection.js?${currentVersion}" />
+		<script src="${contextPath}/js/adm-widget/ciMatrix.js?${currentVersion}"></script>
+
+		<script src="${contextPath}/js/bootstrap/modal.js?${currentVersion}" />
+
+		<script src="${contextPath}/js/d3/d3.min.js?${currentVersion}" />
+
+		<script src="${contextPath}/js/adm/service/relationTypeService.js?${currentVersion}" />
+
+		<script src="${contextPath}/js/adm/service/matrixEntityService.js?${currentVersion}" />
+		<script src="${contextPath}/js/adm/controller/matrixEntitySelectingModalController.js?${currentVersion}" />
+		<script src="${contextPath}/js/adm/controller/matrixQueryConditionSavingModalController.js?${currentVersion}" />
+		<script src="${contextPath}/js/adm/controller/ciMatrixController.js?${currentVersion}" />
+	</ui:define>
+	<ui:define name="body">
+		<div class="layout-main-wrap layout-inquire" ng-controller="ciMatrixCtrl">
+			<div id="titleHeader" class="main-head">
+				<div class="sg-cell">#{msg['tab.header.title.ciMatrix']}</div>
+				<div class="sg-cell sg-cell--fit">
+					<ul class="head-action-list">
+						<li class="head-action-item qu-line-r">
+							<div ng-legend-switch="ci-matrix"/>
+						</li>
+						<li class="head-action-item">
+							<button class="sg-btn sg-btn-default is-chevron-toggle">
+								<span>#{msg['button.common.query.condition']}</span>
+								<span class="icon-chevron-up"></span>
+							</button>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="main-filter -matrix is-open">
+				<div class="sg-cell-group filter-wrap is-scroll-filter">
+					<div class="sg-cell filter-side-wrap" ng-class="{'is-side-open': isSideWrapOpen}">
+						<div class="filter-side-head">
+							<a class="sg-pull--right is-angle-toggle" ng-click="isSideWrapOpen = !isSideWrapOpen"></a>
+							<span class="title">#{msg['tab.header.title.ciMatrix.mySearchCondition']}</span>
+						</div>
+						<div class="filter-side-body">
+							<div class="qu-hint-wrap qu-bg--transparent" ng-show="queryConditions.length == 0">
+								<div class="sg-hint">
+									<i class="icon-info-circle"></i>
+									<span class="sg-hint"> 
+										<!-- TODO -->
+										<h:outputFormat value="#{msg['hint.searchCondition.empty']}">								
+											<f:param value="#{msg['button.common.query.savecondition']}"/>
+										</h:outputFormat>
+									</span>
+								</div>
+							</div>
+							<ul class="sg-list" ng-show="queryConditions.length > 0">
+								<li class="sg-item"
+									ng-repeat="currentQueryCondition in queryConditions"
+									ng-mouseover="searchConditionHoverIn($event)"
+									ng-click="selectSearchCondition($event, currentQueryCondition)"
+									ng-mouseleave="searchConditionHoverOut($event)">
+									<a href="" class="sg-item__content sg-item__link">
+										<div class="sg-content__txt sg-item-avatar--large">
+											<p>{{currentQueryCondition.name}}</p>
+										</div> 
+										<i class="icon-chevron-right sg-pull--right"></i>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="sg-cell -va-top filter-content-wrap">
+						<div class="filter-content-head">
+							<div class="sg-cell-group">
+								<div class="sg-cell">
+									<div class="sg-ellipsis">
+										<span class="title">{{currentQueryCondition}}</span>
+									</div>
+								</div>
+								<div class="sg-cell sg-cell--fit sg-text--right">
+									<button class="sg-btn sg-btn-default" ng-click="openSavingQueryConditionModal()">
+										<span>#{msg['button.common.save']} </span>
+									</button>
+									<button class="sg-btn sg-btn-default" ng-show="isShowEditButton" ng-click="openRenameQueryConditionModal()">
+										<span>#{msg['button.common.rename']} </span>
+									</button>
+									<button class="sg-btn sg-btn-default" ng-show="isShowEditButton" ng-click="deleteQueryCondition()">
+										<span>#{msg['button.common.delete']}</span>
+									</button>
+									<button class="sg-btn sg-btn-default" ng-show="isShowEditButton" ng-click="updateQueryCondition()">
+										<span>#{msg['button.common.update']}</span>
+									</button>
+								</div>
+							</div>
+						</div>
+						<div class="filter-content-body">
+							<form id="ciIdsForm">
+								<div class="sg-input-item sg-input-inline">
+									<span class="sg-input-label">#{msg['tab.header.title.ciMatrix.selectYCI']}</span>
+									<div class="sg-input-inline__content">
+										<div id="sourceDefinitionType">
+											<select id="sourceDefinitionIds" kendo-multi-select="" k-options="definitions" k-ng-model="sourceDefinitions"> </select> 
+										</div>
+										<div class="qu-common-padding-bottom"></div>
+										<input id='sourceIds' class="sg-input" type="text"
+											ng-model="sourceEntitiesStr"
+											ng-disabled="disableSourceSearch"
+											ng-click="openModal(sourceType)" /> <input
+											ng-repeat="sourceDefinition in sourceDefinitions"
+											type="hidden" name="sourceDefinitionIds"
+											value="{{sourceDefinition.definitionId}}" /> <input
+											ng-repeat="id in sourceCiIds" name="sourceIds"
+											type="hidden" value="{{id}}" />
+									</div>
+								</div>
+								<div class="sg-input-inline">
+									<span class="sg-input-label">#{msg['tab.header.title.ciMatrix.selectXCI']}</span>
+									<div class="sg-input-inline__content">
+										<div id="targetDefinitionType">
+											<select id="targetDefinitionIds" kendo-multi-select=""
+											k-options="definitions" k-ng-model="targetDefinitions"></select>
+										</div>
+										<div class="qu-common-padding-bottom"></div>
+										<input ng-repeat="targetDefinition in targetDefinitions"
+											type="hidden" name="targetDefinitionIds"
+											value="{{targetDefinition.definitionId}}" /> <input
+											type="text" class="sg-input" ng-model="targetEntitiesStr"
+											ng-disabled="disableTargetSearch"
+											ng-click="openModal(targetType)" /> <input
+											ng-repeat="id in targetCiIds" name="targetIds"
+											type="hidden" value="{{id}}" />
+									</div>
+								</div>
+								<div class="sg-input-item sg-input-inline" ng-show="!isIndirect">
+									<span class="sg-input-label">#{msg['tab.header.title.ciMatrix.dependencyType']}</span>
+									<select kendo-multi-select="dependencyType" k-options="dependencyTypeOptions" k-ng-model="selectedDependencyTypes" name="dependencyTypes"></select>
+								</div>
+								<div class="sg-input-item sg-input-inline">
+									<span class="sg-input-label">#{msg['label.otherOptions']}</span> 
+									<label id="reduceMatrixLabel" class="sg-checkbox-label"> 
+										<input id="reduceMatrix" type="checkbox" class="sg-checkbox" ng-model="isReduced" /> 
+										<input name="reduce" type="hidden" value="{{isReduced}}" /> 
+										<span>#{msg['tab.header.title.ciMatrix.showReduceMatrix']}</span>
+									</label> 
+									<label class="sg-checkbox-label">
+										<input id="indirectMatrix" type="checkbox" class="sg-checkbox" ng-model="isIndirect" /> 
+										<input name="indirect" type="hidden" value="{{isIndirect}}" /> <span>#{msg['tab.header.title.ciMatrix.showIndirect']}</span>
+									</label>
+								</div>
+								<div class="bar-action">
+									<button type="reset" ng-click="clearConditions()" class="sg-btn sg-btn-default">
+										<span>#{msg['button.common.reset']}</span>
+									</button>
+									<button id="generateMatrix" class="sg-btn sg-btn-flat-primary" ng-click="generateMatrix()" ng-disabled="disableSearch" ng-class="{'sg-state--disable':disableSearch}">#{msg['button.ciMatrix.generateMatrix']}</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="main-work -matrix mask" id="matrixLayout" ng-class="{'is-has-matrix-legend': isShowLegend}">
+				<div id="matrixContainer" class="qu-full-height"></div>
+			</div>
+			<div ng-matrix-legend="ci-matrix"/>
+		</div>
+	</ui:define>
+</ui:composition>
+
+</html>
+
