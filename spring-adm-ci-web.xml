@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx" 
+    xmlns:aop="http://www.springframework.org/schema/aop" 
+    xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.1.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+    <!-- ======================================================================== -->
+
+    <tx:annotation-driven />
+    <aop:aspectj-autoproxy />
+    <context:annotation-config />
+
+    <!-- Setup Environments Profiles. -->
+    <import resource="spring-adm-ci-web-profiles.xml" />
+
+    <!-- Configure Spring Data and JPA of Hibernate. -->
+    <import resource="spring-adm-ci-web-database.xml" />
+
+    <!-- Configure Spring Security, Include SSO, LDAP, Basic Authentication. -->
+    <import resource="classpath:spring-adm-ci-web-security.xml" />
+
+    <import resource="classpath:spring-adm-ci-web-ehcache.xml" />
+
+
+    <!-- ======================================================================== -->
+
+
+    <!-- com.gss.admbranch.persist.dao is deprecated -->
+    <jpa:repositories base-package="com.gss.adm.core.prod.dao" />
+
+    <!-- com.gss.admbranch.persist.dao is deprecated -->
+    <context:component-scan base-package="com.gss.adm.core.prod.dao" />
+    <context:component-scan base-package="com.gss.adm.core.prod.model.converter" />
+    <context:component-scan base-package="com.gss.adm.core.prod.model.sparsematrix.dto.converter" />
+    <context:component-scan base-package="com.gss.adm.core.prod.discovery" />
+    <context:component-scan base-package="com.gss.adm.web" />
+
+    <context:component-scan base-package="com.gss.adm.core.service" />
+    <context:component-scan base-package="com.gss.adm.core.prod.service.provider" />
+    <context:component-scan base-package="com.gss.adm.core.prod.webservice.provider" />
+    <context:component-scan base-package="com.gss.adm.core.prod.repository" />
+
+    <context:component-scan base-package="com.gss.adm.web.view.convert" />
+    <context:component-scan base-package="com.gss.adm.web.form.convert" />
+    <context:component-scan base-package="com.gss.adm.api.config" />
+    <context:component-scan base-package="com.gss.adm.api.schedule" />
+    <context:component-scan base-package="com.gss.adm.api.mail.server" />
+    <context:component-scan base-package="com.gss.adm.api.rest.template" />
+
+    <!-- <bean class="com.gss.adm.api.spring.SpringServiceTraceAspect" /> -->
+
+    <!-- Services -->
+    <!-- <bean id="tagService" class="com.gss.adm.core.prod.service.provider.TagServiceImpl" />
+
+    <bean id="userService" class="com.gss.adm.core.prod.service.provider.UserServiceImpl" />
+    <bean id="userProjectService" class="com.gss.adm.core.prod.service.provider.UserProjectServiceImpl" />
+
+    <bean id="projectService" class="com.gss.adm.core.prod.service.provider.ProjectServiceImpl" />
+    <bean id="projectPropertiesService" class="com.gss.adm.core.prod.service.provider.ProjectPropertiesServiceImpl" />
+    <bean id="projectModelService" class="com.gss.adm.core.prod.service.provider.ProjectModelServiceImpl" />
+    <bean id="projectModelDefinitionService" class="com.gss.adm.core.prod.service.provider.ProjectModelDefinitionServiceImpl" />
+    <bean id="projectModelAttributeSerivce" class="com.gss.adm.core.prod.service.provider.ProjectModelAttributeServiceImpl" />
+    <bean id="projectModelAttributeDefinitionSerivce" class="com.gss.adm.core.prod.service.provider.ProjectModelAttributeDefinitionSerivceImpl" />
+
+    <bean id="entityService" class="com.gss.adm.core.prod.service.provider.EntityServiceImpl" />
+    <bean id="entityRelationService" class="com.gss.adm.core.prod.service.provider.EntityRelationServiceImpl" />
+    <bean id="entityDefinitionService" class="com.gss.adm.core.prod.service.provider.EntityDefinitionServiceImpl" />
+    <bean id="entityDefinitionRelationshipService" class="com.gss.adm.core.prod.service.provider.EntityDefinitionRelationshipServiceImpl" />
+    <bean id="entityRelationTypeService" class="com.gss.adm.core.prod.service.provider.EntityRelationTypeServiceImpl" />
+    
+    <bean id="modelAttributeService" class="com.gss.adm.core.prod.service.provider.ModelAttributeServiceImpl" />
+    <bean id="modelStatusTypeService" class="com.gss.adm.core.prod.service.provider.ModelStatusTypeServiceImpl" />
+    
+    <bean id="attributeDefinitionService" class="com.gss.adm.core.prod.service.provider.AttributeDefinitionServiceImpl" />
+
+    <bean id="ciDiscoveryService" class="com.gss.adm.core.prod.service.provider.CiDiscoveryServiceImpl" />
+    <bean id="ciDependancyFinderService" class="com.gss.adm.core.prod.service.provider.CiDependancyFinderServiceImpl" />
+
+    <bean id="logScheduleService" class="com.gss.adm.core.prod.service.provider.LogScheduleServiceImpl" />
+    <bean id="logScheduleStepService" class="com.gss.adm.core.prod.service.provider.LogScheduleStepServiceImpl" />
+
+    <bean id="introductionService" class="com.gss.adm.core.prod.service.provider.IntroductionServiceImpl" />
+
+    <bean id="groupService" class="com.gss.adm.core.prod.service.provider.GroupServiceImpl" />
+    <bean id="groupRelationshipService" class="com.gss.adm.core.prod.service.provider.GroupRelationshipServiceImpl" />
+
+    <bean id="repositoryService" class="com.gss.adm.core.prod.service.provider.VersionControlServiceImpl" />
+    <bean id="databaseSettingService" class="com.gss.adm.core.prod.service.provider.DatabaseSettingServiceImpl" />
+    
+    <bean id="fullTextSearchService" class="com.gss.adm.core.prod.service.provider.FullTextSearchServiceImpl" />
+    <bean id="scheduleService" class="com.gss.adm.core.prod.service.provider.ScheduleServiceImpl" />
+
+    <bean id="impactAnalysisRecordService" class="com.gss.adm.core.prod.service.provider.ImpactAnalysisRecordServiceImpl" />
+    
+    <bean id="auditTrailService" class="com.gss.adm.core.prod.service.provider.AuditTrailServiceImpl" />
+    
+    <bean id="blacklistService" class="com.gss.adm.core.prod.service.provider.BlacklistServiceImpl" />
+    
+    <bean id="ciSheetService" class="com.gss.adm.core.prod.service.provider.CiSheetServiceImpl" />
+    
+    <bean id="matrixService" class="com.gss.adm.core.prod.service.provider.MatrixServiceImpl" />
+    
+    <bean id="invocationRateService" class="com.gss.adm.core.prod.service.provider.InvocationRateServiceImpl" />
+    <bean id="invocationRelationService" class="com.gss.adm.core.prod.service.provider.InvocationRelationServiceImpl" />
+
+    <bean id="relationCauseService" class="com.gss.adm.core.prod.service.provider.RelationCauseServiceImpl" />
+    <bean id="relationCaseService" class="com.gss.adm.core.prod.service.provider.RelationCaseServiceImpl" />
+    <bean id="relationTemplateService" class="com.gss.adm.core.prod.service.provider.RelationTemplateServiceImpl" />
+    <bean id="defaultRelationCauseService" class="com.gss.adm.core.prod.service.provider.DefaultRelationCauseServiceImpl" />
+    <bean id="defaultRelationTemplateService" class="com.gss.adm.core.prod.service.provider.DefaultRelationTemplateServiceImpl" />
+
+    <bean id="changeAnalysisService" class="com.gss.adm.core.prod.service.provider.ChangeAnalysisServiceImpl" />
+
+    <bean id="apiQueryService" class="com.gss.adm.core.prod.service.provider.ApiQueryServiceImpl" />
+
+    <bean id="changeAnalysisWizardActService" class="com.gss.adm.core.prod.service.provider.ChangeAnalysisWizardActServiceImpl" />
+
+	<bean id="miningRuleService" class="com.gss.adm.core.prod.service.provider.MiningRuleServiceImpl" />
+
+	<bean id="matrixQueryConditionService" class="com.gss.adm.core.prod.service.provider.MatrixQueryConditionServiceImpl" />
+
+	<bean id="projectStatisticsService" class="com.gss.adm.core.prod.service.provider.ProjectStatisticsServiceImpl" />
+ -->
+    <!-- Converters -->
+<!--     <bean id="projectModelViewConverter" class="com.gss.adm.web.view.convert.ProjectModelViewConverter" />
+    <bean id="projectModelAttributeViewConverter" class="com.gss.adm.web.view.convert.ProjectModelAttributeViewConverter" />
+    <bean id="projectModelAttributeDefinitionViewConverter" class="com.gss.adm.web.view.convert.ProjectModelAttributeDefinitionViewConverter" />
+    <bean id="projectModelDefinitionViewConverter" class="com.gss.adm.web.view.convert.ProjectModelDefinitionViewConverter" />
+
+    <bean id="groupTreeViewConverter" class="com.gss.adm.web.view.convert.GroupTreeViewConverter" />
+    <bean id="groupTreeRootViewConverter" class="com.gss.adm.web.view.convert.GroupTreeRootViewConverter" />
+    <bean id="groupEntityTreeViewConverter" class="com.gss.adm.web.view.convert.GroupEntityTreeViewConverter" />
+    <bean id="impactAnalysisRecordViewConverter" class="com.gss.adm.web.view.convert.ImpactAnalysisRecordViewConverter" />
+    <bean id="impactAnalysisGroupViewConverter" class="com.gss.adm.web.view.convert.ImpactAnalysisGroupViewConverter" />
+    <bean id="constructItemViewConverter" class="com.gss.adm.web.view.convert.ConstructItemViewConverter" />
+    <bean id="impactAnalysisRecordConverter" class="com.gss.adm.web.view.form.convert.ImpactAnalysisRecordConverter" />
+    <bean id="impactAnalysisGroupConverter" class="com.gss.adm.web.view.form.convert.ImpactAnalysisGroupConverter" />
+    <bean id="constructItemConverter" class="com.gss.adm.web.view.form.convert.ConstructItemConverter" />
+    
+    <bean id="blacklistVoConverter" class="com.gss.adm.core.prod.model.converter.BlacklistVoConverter" />
+    <bean id="blacklistConverter" class="com.gss.adm.core.prod.model.converter.BlacklistConverter" />
+
+    <bean id="changeAnalysisViewConverter" class="com.gss.adm.web.view.convert.ChangeAnalysisViewConverter" />
+    <bean id="changeRecordViewConverter" class="com.gss.adm.web.view.convert.ChangeRecordViewConverter" />
+    <bean id="changedEntityViewConverter" class="com.gss.adm.web.view.convert.ChangedEntityViewConverter" />
+    <bean id="changedMethodViewConverter" class="com.gss.adm.web.view.convert.ChangedMethodViewConverter" />
+
+    <bean id="changeAnalysisWizardActViewConverter" class="com.gss.adm.web.view.convert.ChangeAnalysisWizardActViewConverter" />
+
+    <bean id="matrixQueryConditionViewConverter" class="com.gss.adm.web.view.convert.MatrixQueryConditionViewConverter" />
+    <bean id="matrixQueryConditionConverter" class="com.gss.adm.web.view.form.convert.MatrixQueryConditionConverter" /> -->
+
+    <bean id="entityExtractor" class="com.gss.adm.web.util.EntityExtractor" />
+    <!-- add bean announce by hand temporary -->
+<!--     <bean id="ciFactory" class="com.gss.adm.core.prod.discovery.CiFactoryImpl" /> -->
+<!--     <bean id="svnSourceCodeLoader" class="com.gss.adm.core.prod.discovery.loader.SvnSourceCodeLoader" /> -->
+<!--     <bean id="jsfDiscoveryStrategy" class="com.gss.adm.core.prod.discovery.strategy.JsfDiscoveryStrategy" /> -->
+<!--     <bean id="jsfJavaDiscoveryStrategy" class="com.gss.adm.core.prod.discovery.strategy.JsfJavaDiscoveryStrategy" /> -->
+<!--     <bean id="strutsJavaDiscoveryStrategy" class="com.gss.adm.core.prod.discovery.strategy.StrutsJavaDiscoveryStrategy" /> -->
+<!--     <bean id="strutsJspDiscoveryStrategy" class="com.gss.adm.core.prod.discovery.strategy.StrutsJspDiscoveryStrategy" /> -->
+<!--     <bean id="jsfXhtmlDiscoveryStrategy" class="com.gss.adm.core.prod.discovery.strategy.JsfXhtmlDiscoveryStrategy" /> -->
+<!--     <bean id="cSharpDiscoveryStrategy" class="com.gss.adm.core.prod.discovery.strategy.CSharpDiscoveryStrategy" /> -->
+<!--     <bean id="javaDiscoveryStrategy" class="com.gss.adm.core.prod.discovery.strategy.JavaDiscoveryStrategy" /> -->
+<!--     <bean id="hibernateConfigDiscoveryStrategy" class="com.gss.adm.core.prod.discovery.strategy.HibernateConfigDiscoveryStrategy" /> -->
+<!--     <bean id="cSharpWhiteListDiscoveryStrategy" class="com.gss.adm.core.prod.discovery.strategy.CSharpWhiteListDiscoveryStrategy" /> -->
+<!--     <bean id="javaWhiteListDiscoveryStrategy" class="com.gss.adm.core.prod.discovery.strategy.JavaWhiteListDiscoveryStrategy" /> -->
+
+    <!-- <bean id="projectPropertiesProvider" class="com.gss.adm.core.prod.service.provider.ProjectConfigurationProvider" /> -->
+
+    <!-- Setup Schedule Manager. -->
+    <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" destroy-method="destroy" />
+    <bean id="scheduleJobFactory" class="com.gss.adm.core.prod.schedule.AdmScheduleJobFactory" />
+    <bean id="scheduleJobContext" class="com.gss.adm.core.prod.schedule.AdmScheduleJobContext" />
+    <bean id="scheduleManager" class="com.gss.adm.api.schedule.ScheduleManager">
+        <property name="scheduleJobContext" ref="scheduleJobContext" />
+    </bean>
+
+
+    <bean id="auditTrailBeforeAdvice" class="com.gss.adm.web.aop.AuditTrailBeforeAdvice" />
+    <aop:config>
+        <aop:advisor 
+        	advice-ref="auditTrailBeforeAdvice"
+            pointcut="execution(public * com.gss.adm.web.jsf.actions.*+.*(..)) 
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.FullTextSearchAction+.*(..))
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.UserAction+.getCurrentUser(..))
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.UserAction+.getAllUsers(..))
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.UserAction+.getUsersByUsernameLike(..))
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.ProjectAction+.getCurrentProject(..))
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.ProjectAction+.getUserSimpleProjects(..))
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.ProjectConfigurationAction+.findDefinitionsByType(..))
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.ProjectConfigurationAction+.findAttributesByDefinitionId(..))
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.CiMaintainAction+.getAttributeDefinition(..))
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.IntroductionAction+.findIntroductions(..))
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.CiDownloadAction+.download(..))
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.CiRelationDownloadAction+.download(..))
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.SpreadExcelIOAction+.downloadAsExcel(..))
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.RelationTypeAction+.getAllRelationTypes(..))
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.EntityDefinitionAction+.getAllEntityDefinitions(..))
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.EntityDefinitionAction+.getAttributeDefinition(..))
+              &amp;&amp; !execution(public * com.gss.adm.web.jsf.actions.ProjectAction+.save(..))" />
+    </aop:config>
+
+</beans>
