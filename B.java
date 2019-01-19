@@ -11,6 +11,8 @@ public class B {
 	public void B2(){
 		A a = new A();
 		a.A1();
+		C c = new C();
+		c.C1();
 	}
 	
 }
