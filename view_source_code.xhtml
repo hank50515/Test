@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/templates/template.xhtml">
+	<ui:define name="title">#{msg['page.header.viewSourceCode']}</ui:define>
+	<ui:define name="head">
+
+		<link type="text/css" rel="stylesheet"
+			href="${contextPath}/js/syntaxhighlighter/styles/shCoreDefault.css" />
+		<link type="text/css" rel="stylesheet"
+			href="${contextPath}/css/adm/syntaxhighlighter_override.css" />
+
+		<script type="text/javascript"
+			src="${contextPath}/js/jquery.highlight/jquery.highlight.js"></script>
+		<script type="text/javascript"
+			src="${contextPath}/js/syntaxhighlighter/scripts/shCore.js"></script>
+
+		<!-- brushes -->
+		<script type="text/javascript"
+			src="${contextPath}/js/syntaxhighlighter/scripts/shBrushJScript.js"></script>
+		<script type="text/javascript"
+			src="${contextPath}/js/syntaxhighlighter/scripts/shBrushJava.js"></script>
+		<script type="text/javascript"
+			src="${contextPath}/js/syntaxhighlighter/scripts/shBrushCSharp.js"></script>
+		<script type="text/javascript"
+			src="${contextPath}/js/syntaxhighlighter/scripts/shBrushVb.js"></script>
+		<script type="text/javascript"
+			src="${contextPath}/js/syntaxhighlighter/scripts/shBrushSql.js"></script>
+		<script type="text/javascript"
+			src="${contextPath}/js/syntaxhighlighter/scripts/shBrushJScript.js"></script>
+		<script type="text/javascript"
+			src="${contextPath}/js/syntaxhighlighter/scripts/shBrushXml.js"></script>
+
+		<script type="text/javascript"
+			src="${contextPath}/js/adm/service/impactAnalysisService.js?${currentVersion}"></script>
+		<script type="text/javascript"
+			src="${contextPath}/js/adm/service/entityService.js"></script>
+
+		<script type="text/javascript"
+			src="${contextPath}/js/adm/controller/viewSourceCodeModalController.js?${currentVersion}"></script>
+		<script type="text/javascript"
+			src="${contextPath}/js/adm/controller/viewSourceCodeController.js?${currentVersion}"></script>
+
+		<script id="sourceCodeForwardLink-template"
+			type="text/kendo-ui-template">
+        	# for( var i=0 ; (i &lt; entities.length) ; i++) { #
+				# if( entities[i].isExternal ) { #
+					<div title='#:entities[i].projectName# \r\n#:entities[i].targetEntityCode#' class='qu-external-entity-link qu-external-background-color' entityId='#:entities[i].sourceEntityId#' targetline='#:entities[i].targetEntityLineNumber#'> line (#: entities[i].targetEntityLineNumber#) : #: entities[i].targetEntityName# - #: entities[i].methodName#</div>
+				# } else {#
+					<a title='#:entities[i].targetEntityCode#' class='qu-entity-link' entityId='#:entities[i].sourceEntityId#' targetline='#:entities[i].targetEntityLineNumber#'> line (#: entities[i].targetEntityLineNumber#) : #: entities[i].targetEntityName# - #: entities[i].methodName#</a>
+        		# } #
+			# } #
+        </script>
+
+		<script id="sourceCodeBackwardLink-template"
+			type="text/kendo-ui-template">
+      		# for( var i=0 ; (i &lt; entities.length) ; i++) { #
+				# if( entities[i].isExternal ) { #
+					<div title='#:entities[i].projectName# \r\n#:entities[i].sourceEntityCode#' class='qu-external-entity-link qu-external-background-color' entityId='#:entities[i].sourceEntityId#' targetline='#:entities[i].sourceEntityLineNumber#'> line (#: entities[i].sourceEntityLineNumber#) : #: entities[i].sourceEntityName# - #: entities[i].sourceMethodName#</div>
+				# } else {#
+					<a title='#:entities[i].sourceEntityCode#' class='qu-entity-link' entityId='#:entities[i].sourceEntityId#' targetline='#:entities[i].sourceEntityLineNumber#'> line (#: entities[i].sourceEntityLineNumber#) : #: entities[i].sourceEntityName# - #: entities[i].sourceMethodName#</a>
+				# } #
+			# } #
+  		</script>
+
+		<script id="methodForwardLink-template" type="text/kendo-ui-template">
+			# for( var i=0 ; (i &lt; entities.length) ; i++) { #
+				# if( entities[i].isExternal ) { #
+					<div title='#:entities[i].targetProjectName# \r\n#:entities[i].targetEntityCode#' class='qu-external-entity-link qu-external-background-color' entityId='#:entities[i].targetEntityId#' line='#:entities[i].sourceEntityLineNumber#' targetline='#:entities[i].targetEntityLineNumber#'> line (#: entities[i].sourceEntityLineNumber#) : #: entities[i].methodName#</div>
+				# } else {#
+					<a title='#:entities[i].targetEntityCode#' class='qu-entity-link' entityId='#:entities[i].targetEntityId#' line='#:entities[i].sourceEntityLineNumber#' targetline='#:entities[i].targetEntityLineNumber#'> line (#: entities[i].sourceEntityLineNumber#) : #: entities[i].methodName#</a>
+				# } #
+			# } #
+  		</script>
+
+		<script id="methodBackwardLink-template" type="text/kendo-ui-template">
+			# for( var i=0 ; (i &lt; entities.length) ; i++) { #
+				# if( entities[i].isExternal ) { #
+					<div title='#:entities[i].sourceProjectName# \r\n#:entities[i].sourceEntityCode#' class='qu-external-entity-link qu-external-background-color' entityId='#:entities[i].sourceEntityId#' line='#:entities[i].targetEntityLineNumber#' targetline='#:entities[i].sourceEntityLineNumber#'> backward line(#: entities[i].sourceEntityLineNumber#), current line (#: entities[i].targetEntityLineNumber#) : #: entities[i].methodName#</div>
+				# } else {#
+					<a title='#:entities[i].sourceEntityCode#' class='qu-entity-link' entityId='#:entities[i].sourceEntityId#' line='#:entities[i].targetEntityLineNumber#' targetline='#:entities[i].sourceEntityLineNumber#'> backward line(#: entities[i].sourceEntityLineNumber#), current line (#: entities[i].targetEntityLineNumber#) : #: entities[i].methodName#</a>
+				# } #
+			# } #
+  		</script>
+	</ui:define>
+	<ui:define name="body">
+		<div class="layout-main-wrap layout-splitter"
+			ng-controller="sourceCodeControl" kendo-splitter=""
+			k-panes="[{ collapsible: true, resizable: false, size: '220px' },{ collapsible: false, resizable: false } ]">
+			<!-- method tree list -->
+			<div class="main-splitter-sidebar">
+				<div class="sg-scroll qu-source-code-sidebar-container">
+					<nav id="sourceCodeSideBar" class="qu-source-code-sidebar"
+						data-role="tooltip">
+						<ul class="list-group">
+							<li class="list-item"
+								ng-class="relationship.items.length > 0 ? 'has-child' : ''"
+								ng-repeat="relationship in relationships track by $index">
+								<a class="list-link">
+									<p class="sg-ellipsis" title="{{relationship.name}}">
+										<span class="inner-txt first-level">{{relationship.name}}</span>
+										<i class="icon-qu-code-forward forward"
+											ng-if="relationship.name == 'Forward'"></i> <i
+											class="icon-qu-code-backward backward"
+											ng-if="relationship.name == 'Backward'"></i>
+									</p> <i ng-if="relationship.items.length > 0"
+									class="sidebar-icon--right icon-chevron-down"></i>
+								</a>
+								<ul ng-if="relationship.items.length > 0"
+									class="list-group--sublist sublist--second">
+									<li class="list-item" ng-repeat="item in relationship.items"
+										ng-class="item.isExternal ? 'qu-external-background-color-important' : ''">
+										<a class="list-link">
+											<p class="sg-ellipsis" ng-show="item.isExternal">
+												<span class="inner-txt"
+													title="{{item.externalProjectName}}&#013;{{item.displayCode}}">{{item.displayName}}</span>
+											</p>
+											<p class="sg-ellipsis" ng-show="!item.isExternal">
+												<span class="inner-txt" title="{{item.displayCode}}">{{item.displayName}}</span>
+											</p>
+											<div class="qu-source-code-buttons sg-text--right">
+												<button class="sg-btn sg-btn-default sg-btn-square"
+													title="#{msg['button.common.viewSourceCode']}"
+													ng-if="!(item.forward || item.backward)"
+													ng-click="gotoSelectedMethod(item)">
+													<i class="icon-qu-code-source"></i>
+												</button>
+												<div class="sg-btn-group"
+													ng-if="item.forward || item.backward">
+													<button class="sg-btn sg-btn-default sg-btn-square"
+														title="#{msg['button.common.viewSourceCode']}"
+														ng-click="gotoSelectedMethod(item)"
+														ng-show="!item.isExternal">
+														<i class="icon-qu-code-source"></i>
+													</button>
+													<button
+														class="sg-btn sg-btn-default sg-btn-square qu-source-code-detail qu-source-code-detail-forward"
+														title="#{msg['tab.header.title.dependencyInquiry.viewRelatedItems']}"
+														entityId="{{item.id}}"
+														ng-if="item.forward &amp;&amp; !item.notHasEntities"
+														ng-click="showTooltip(item, $event)">
+														<i class="icon-qu-code-forward"></i>
+													</button>
+													<button
+														class="sg-btn sg-btn-default sg-btn-square qu-source-code-detail qu-source-code-detail-backward"
+														title="#{msg['tab.header.title.dependencyInquiry.viewRelatedItems']}"
+														entityId="{{item.id}}"
+														ng-if="item.backward &amp;&amp; !item.notHasEntities"
+														ng-click="showTooltip(item, $event)">
+														<i class="icon-qu-code-backward"></i>
+													</button>
+												</div>
+											</div>
+									</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+			<!-- source code content -->
+			<div class="main-splitter-area is-noscroll">
+				<div class="main-head">
+					<div class="sg-cell sg-text--left" title="{{entity.displayCode}}">
+						<button class="sg-btn sg-btn-default"
+							title="#{msg['button.addImpactList']}" ng-click="addIntoCart()">
+							<i class="icon-qu-add-left"></i>
+						</button>
+						{{entity.displayName}}	
+						<i class="icon-warning qu-warning-icon-yellow" id="blacklistIconWarning" ng-show="entity.blacklist"></i>		
+					</div>								
+					<div class="sg-cell sg-cell--fit">
+						<i class="icon-info-circle"></i> <span>#{msg['hint.viewSourceCode.buildRelationshipAfterSelecting']}</span>
+					</div>
+				</div>
+				<div class="main-work -sourceCode">
+					<div id="sourceCodeContainer" class="sg-scroll">
+						<div id="sourceCodeContent" class="highlightData"
+							ng-show="showCodeFlag">
+							<pre ng-model="sourceCodeContent" ng-cloak=""
+								class="brush: {{syntaxHighlightExtensionName}}">{{sourceCodeContent}}</pre>
+						</div>
+						<div class="qu-source-code-add-relation-container"
+							ng-show="enableCreateRelationship">
+							<button class="sg-btn sg-btn-default sg-btn-square"
+								ng-click="buildRelationship()">
+								<i class="icon-edit" title="#{msg['button.buildRelation']}"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>
+</html>
