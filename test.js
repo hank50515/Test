@@ -1,6 +1,5 @@
 
-$("#123++").value();  
+$("#123++").click(function() {
+  alert( "Handler for .click() called." );
+});
 
-var abc = function(){
-	return 123;
-}
