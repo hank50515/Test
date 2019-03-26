@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+    xmlns="http://www.springframework.org/schema/beans" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+
+    <jaxrs:server id="adm-ci-web-actions" address="/">
+        <jaxrs:serviceBeans>
+	        <ref bean="alertSystemStatusAction" />
+            <ref bean="groupAction" />
+            <ref bean="entityAction" />
+            <ref bean="projectAction" />
+          	<ref bean="projectConfigurationAction"/>
+            <ref bean="sourceCodeAction" />
+            <ref bean="introductionAction" />
+            <ref bean="entityRelationAction" />
+            <ref bean="sourceCodeUploadAction" />
+            <ref bean="entityDefinitionAction" />
+            <ref bean="ciRelationTreeMapAction" />
+            <ref bean="matrixRelationAction" />
+            <ref bean="ciMaintainAction" />
+            <ref bean="scheduleAction" />
+            <ref bean="fullTextSearchAction" />
+          	<ref bean="impactAnalysisAction"/>
+          	<ref bean="userAction"/>
+            <ref bean="relationTypeAction"/>
+            <ref bean="blacklistAction"/>
+            <ref bean="ciUploadAction"/>
+            <ref bean="ciRelationUploadAction"/>
+            <ref bean="ciDownloadAction"/>
+            <ref bean="ciRelationDownloadAction"/>
+            <ref bean="spreadExcelIOAction"/>
+            <ref bean="invocationRelationAction" />
+            <ref bean="relationTemplateAction" />
+            <ref bean="relationCaseAction" />
+            <ref bean="searchEntityAction" />
+            <ref bean="changeAnalysisAction" />
+            <ref bean="changeAnalysisWizardAction" />
+            <ref bean="matrixQueryConditionAction" />
+            <ref bean="unAuthAction" />
+            <ref bean="versionControlAction" />
+            <ref bean="manageRelationTemplateAction" />
+            <ref bean="missingRelationshipAction" />
+            <ref bean="preScanStatusAction" />
+            <ref bean="userProjectAction" />
+            <ref bean="strategySourceCodeAction" />
+            <ref bean="pdfDownloadAction" />
+            <ref bean="entityDefinitionRelationshipAction" />
+        </jaxrs:serviceBeans>
+
+        <jaxrs:invoker>
+            <bean class="com.gss.adm.api.rest.cxf.invoker.CxfBeanValidationInvoker" />
+        </jaxrs:invoker>
+
+        <jaxrs:providers>
+            <bean class="com.gss.tds.common.http.provider.GsonMessageBodyProvider" />
+            <bean class="com.gss.adm.api.rest.mapper.ValidationExceptionMapper" />
+            <bean class="com.gss.adm.api.rest.mapper.IllegalArgumentExceptionMapper" />
+            <bean class="com.gss.adm.api.rest.mapper.RuntimeExceptionMapper" />
+            <bean class="com.gss.adm.api.rest.mapper.IOExceptionMapper" />
+            <bean class="com.gss.adm.api.rest.mapper.DirectionErrorExceptionMapper" />
+            <bean class="com.gss.adm.api.rest.mapper.DecryptErrorExceptionMapper" />
+        </jaxrs:providers>
+    </jaxrs:server>
+</beans>
