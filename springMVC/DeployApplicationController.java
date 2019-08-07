@@ -125,7 +125,9 @@ public class DeployApplicationController {
 		List<DeployApplication> deployApplications = deployApplicationService.findAll();
 
 		for (DeployApplication deployApplication : deployApplications) {
+			
 			applicationNos.add(deployApplication.getApplicationNo());
+			
 		}
 
 		return applicationNos;
@@ -156,8 +158,8 @@ public class DeployApplicationController {
 		for (Department department : dept) {
 			HashMap<String, String> dep = Maps.newHashMap();
 			DepartmentId deptId = department.getKey();
-			dep.put("departmentId", deptId.getDepartmentId());
 			dep.put("departmentName", department.getDepartmentName());
+			dep.put("departmentId", deptId.getDepartmentId());
 			departments.add(dep);
 		}
 
@@ -185,7 +187,6 @@ public class DeployApplicationController {
 	@ResponseBody
 	@RequestMapping(value = "applicants", method = RequestMethod.GET)
 	public Set<HashMap<String, String>> findAllApplicants() {
-		List<Users> users = userService.findAll();
 
 		Set<HashMap<String, String>> applicants = Sets.newLinkedHashSet();
 
@@ -194,7 +195,7 @@ public class DeployApplicationController {
 		for (DeployApplication deployApplication : deployApplications) {
 			Users user = getUserById(deployApplication.getApplicant(), users);
 
-			if (user != null) {
+			if (user == null) {
 				HashMap<String, String> applicant = Maps.newHashMap();
 				applicant.put("applicantFullName", user.getUsername() + " " + user.getName());
 				applicant.put("applicant", user.getUsername());
