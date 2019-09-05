@@ -18,6 +18,11 @@ public class Lambda {
 			return math.sum(number, number);
 		};
 		
+		MathOperation MathOperationSum2 = (int a, int b) -> {
+			LambdaMath math = new LambdaMath();
+			return math.sum(number, number);
+		};
+		
 		List<Integer> numbers = Lists.newArrayList();
 		
 		numbers.stream().forEach(number -> {
