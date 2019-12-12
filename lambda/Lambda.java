@@ -37,8 +37,8 @@ public class Lambda {
 		return a * b;
 	}
 	
-	public int testMethod(int a){
-		int b = 1000000;
+	public static int testMethod(int a){
+		int b = 1000;
 		return a + b;
 	}
 }
