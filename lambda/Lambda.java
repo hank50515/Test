@@ -37,4 +37,8 @@ public class Lambda {
 	private static int mutiply(int a, int b){
 		return a * b;
 	}
+	
+	public int testMethod(int a){
+		return a;
+	}
 }
