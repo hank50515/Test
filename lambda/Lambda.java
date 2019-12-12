@@ -39,6 +39,6 @@ public class Lambda {
 	
 	public int testMethod(int a){
 		int b = 10000000;
-		return a;
+		return a + b;
 	}
 }
