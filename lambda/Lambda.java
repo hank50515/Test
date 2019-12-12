@@ -32,8 +32,6 @@ public class Lambda {
 		
 		numbers.stream().forEach(number -> mutiply(number, number));
 		
-		testMethod(1000);
-		
 	}
 	
 	private static int mutiply(int a, int b){
