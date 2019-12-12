@@ -42,4 +42,8 @@ public class Lambda {
 		int c = 200
 		return a + b + c;
 	}
+	
+	public int add(int a){
+		return a;
+	}
 }
