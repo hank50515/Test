@@ -32,7 +32,7 @@ public class Lambda {
 		
 		numbers.stream().forEach(number -> mutiply(number, number));
 		
-		testMethod(10);
+		testMethod(1000);
 		
 	}
 	
