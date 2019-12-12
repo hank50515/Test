@@ -44,6 +44,7 @@ public class Lambda {
 	}
 	
 	public int add(int a){
-		return a;
+		int c = 500;
+		return a + c;
 	}
 }
