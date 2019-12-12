@@ -39,7 +39,7 @@ public class Lambda {
 	}
 	
 	public int testMethod(int a){
-		int b = 1000;
-		return a + b;
+		int b = 10000000;
+		return a;
 	}
 }
