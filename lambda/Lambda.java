@@ -29,8 +29,7 @@ public class Lambda {
 			LambdaMath math = new LambdaMath();
 			math.sum(number, number);
 		});
-		
-		numbers.stream().forEach(number -> mutiply(number, number));
+	
 		
 	}
 	
