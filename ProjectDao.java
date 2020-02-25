@@ -12,7 +12,7 @@ public interface ProjectDao extends BaseRepository<Project, Long> {
 	@Query("SELECT code from Project where id = ?1")
 	String getCodeById(Long id);
 
-	Project findByCode(String code);
+	Project findByCode(String codeee);
 
 	Project findByPropertiesJiraKey(String jiraKey);
 
