@@ -85,15 +85,6 @@ public class LogScheduleServiceImpl implements LogScheduleService {
 	@Override
 	public Long getEstimatedTimespentByScheduleType(Long projectId, String scheduleId,
 			Collection<SchedulingScanStatusEnum> scanStatus, ScheduleTypeEnum scheduleType) {
-		if (ScheduleTypeEnum.MATRIX.equals(scheduleType)) {
-			// 取得Matrix的預估時間
-			return getBuildMatrixEstimatedTimespent(projectId, scanStatus);
-		} else if (ScheduleTypeEnum.DISCOVERY.equals(scheduleType)) {
-			// 取得Discovery的預估時間
-			return getExecuteDiscoveryEstimatedTimespent(projectId, scheduleId, scheduleType, scanStatus);
-		} else {
-			throw new IllegalArgumentException("ScheduleType not implemented " + scheduleType.toString() + " !");
-		}
 
 	}
 
@@ -105,6 +96,8 @@ public class LogScheduleServiceImpl implements LogScheduleService {
 		List<LogSchedule> logSchedules = scheduleLogDao.findByStatuses(statuses);
 		scheduleLogDao.delete(logSchedules);
 		scheduleLogDao.flush();
+		
+		return;
 	}
 
 	@Override
