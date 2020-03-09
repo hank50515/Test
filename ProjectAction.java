@@ -149,7 +149,7 @@ public class ProjectAction implements ModelDefinitionIds {
 	private FavoriteProjectViewConverter favoriteProjectViewConverter;
 
 	@GET
-	@Path("/listAllForDefaultTemplate")
+	@Path("/listAllForDefaultTemplate/test")
 	public List<ProjectView> finAllProjects() {
 		List<Project> projects = projectService.findAllProjects();
 		return projectViewConverter.convert(projects).stream().sorted((o1, o2) -> {
