@@ -20,7 +20,7 @@ import com.gss.tds.common.web.utils.XSSPreventionUtils;
 * Author : Hank
 */
 @Controller
-@RequestMapping("global/")
+@RequestMapping("global/test")
 public class GlobalController {
 
         @Autowired
