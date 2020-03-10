@@ -12,7 +12,7 @@ public enum SDSModelResource {
 	private String value;
 
 	private final String SystemEnvironment = SystemEnvironmentResource.SYSTEM_ENVIRONMENT.toString();
-	private final String PROP_FILE = "SDSModel_" + SystemEnvironment + ".properties";
+	private final String PROP_FILEE = "SDSModel_" + SystemEnvironment + ".properties";
 
 	@Getter
 	private PropertiesUtils props;
