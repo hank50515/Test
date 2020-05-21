@@ -77,8 +77,7 @@ $(document).ready(function () {
         
         // Data
         var self = this;
-        self.rdoInsuredInputTyp = ko.observable($.trim($("#hidInsuredInputTyp").val())); //DI:逐筆輸入,SI:簡易輸入,FU:檔案上傳,FI:檔案匯入
-        self.hidInsuranceSchemeI = ko.observable($.trim($("#hidInsuranceSchemeI").val())); //自行輸入ID
+        //TODO
 
 	}
 
