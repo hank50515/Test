@@ -72,13 +72,19 @@ $(document).ready(function () {
         var urlRoot = urlMain.substring(0,ii);
         var chaValue = "0.0"; //劫機慰問 
         var othValue = "0.0"; //額外費用 
-        var cfpValue = "0.0"; //竊盜損失
-        var clmValue = "0.0"; //食物中毒
         //var limitTourDaysMax = 0; //旅遊天數上限
         //var limitAmtMax = 0; //ADD上限保額
         
         // Data
-        
+        var self = this;
+        self.rdoInsuredInputTyp = ko.observable($.trim($("#hidInsuredInputTyp").val())); //DI:逐筆輸入,SI:簡易輸入,FU:檔案上傳,FI:檔案匯入
+        self.hidInsuranceSchemeI = ko.observable($.trim($("#hidInsuranceSchemeI").val())); //自行輸入ID
+
+        self.isZtmm = ko.observable($.trim($("#hidIsZtmm").val()));
+        self.cbxAgntCD = ko.observable($.trim($("#hidAgntCD").val())).extend({
+            required: true,
+            maxLength: 8
+        }); //經手
 	}
 
     var vm = new InviteInputViewModel();
