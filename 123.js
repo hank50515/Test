@@ -27,10 +27,9 @@ $(document).ready(function () {
 		console.log(self);
         //TODO
 		
-		$("#hidAfterLoadMark").attr("value", "Y");
-
 	}
 
     var vm = new InviteInputViewModel();
+	console.log(vm);
     
 });
