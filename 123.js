@@ -24,7 +24,10 @@ $(document).ready(function () {
         var urlMain = location.href;
         
         var self = this;
+		console.log(self);
         //TODO
+		
+		$("#hidAfterLoadMark").attr("value", "Y");
 
 	}
 
