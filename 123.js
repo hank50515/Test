@@ -11,7 +11,7 @@ $(document).ready(function () {
     });
     
     $(".ui-spinner-button").click(function() {
-        $(this).siblings("input").change();
+        console.log();
     });
 
     function afterLoadAction() {
