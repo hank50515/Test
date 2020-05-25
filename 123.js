@@ -25,6 +25,7 @@ $(document).ready(function () {
         
         var self = this;
 		console.log(self);
+		$("#hidAfterLoadMark").attr("value", "Y");
         //TODO
 
 	}
