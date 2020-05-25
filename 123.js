@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    $("div#submenu > div > a:contains('要')").addClass("link hassub on");
+    
     $("div#submenu > div > div > a:contains('團')").click(function() {
         var urlMain = location.href;
         if(r==true){
@@ -30,5 +30,5 @@ $(document).ready(function () {
 
     var vm = new InviteInputViewModel();
 	console.log(vm);
-    
+    $("div#submenu > div > a:contains('要')").addClass("link hassub on");
 });
