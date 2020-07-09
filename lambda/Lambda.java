@@ -9,6 +9,10 @@ public class Lambda {
 	
 	public static void main(String args[]) {
 		
+		MathOperation MathOperationMutiply1 = (int a, int b) -> mutiply(a, b);
+
+		MathOperation MathOperationMutiply2 = (a, b) -> mutiply(a, b);
+		
 		MathOperation MathOperationMutiply3 = (int a, int b) -> mutiply(a, b);
 		
 		MathOperation MathOperationSum = (int a, int b) -> {
@@ -27,10 +31,6 @@ public class Lambda {
 
 		System.out.println(number);
 
-		MathOperation MathOperationMutiply1 = (int a, int b) -> mutiply(a, b);
-
-		MathOperation MathOperationMutiply2 = (a, b) -> mutiply(a, b);
-		
 	}
 	
 	private static int mutiply(int a, int b){
