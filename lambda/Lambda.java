@@ -27,11 +27,7 @@ public class Lambda {
 			math.sum(number, number);
 		});
 		
-		numbers.stream().forEach(number -> {
-			LambdaMath math = new LambdaMath();
-			math.sum(number, number);
-		});
-	
+	MathOperation MathOperationMutiply6 = (int a, int b) -> mutiply(a, b);
 	}
 	
 	private static int mutiply(int a, int b){
