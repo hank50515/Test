@@ -10,10 +10,10 @@ public class Lambda {
 	public static void main(String args[]) {
 		
 		MathOperation MathOperationMutiply1 = (int a, int b) -> mutiply(a, b);
-
-		MathOperation MathOperationMutiply2 = (a, b) -> mutiply(a, b);
 		
 		MathOperation MathOperationMutiply5 = (int a, int b) -> mutiply(a, b);
+		
+		MathOperation MathOperationMutiply3 = (int a, int b) -> mutiply(a, b);
 		
 		MathOperation MathOperationSum = (int a, int b) -> {
 			LambdaMath math = new LambdaMath();
@@ -26,10 +26,7 @@ public class Lambda {
 			LambdaMath math = new LambdaMath();
 			math.sum(number, number);
 		});
-		numbers.stream().forEach(number -> {
-			LambdaMath math = new LambdaMath();
-			math.sum(number, number);
-		});
+
 	}
 	
 	private static int mutiply(int a, int b){
