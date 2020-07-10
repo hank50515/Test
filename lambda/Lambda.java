@@ -13,7 +13,6 @@ public class Lambda {
 		
 		MathOperation MathOperationMutiply5 = (int a, int b) -> mutiply(a, b);
 		
-		MathOperation MathOperationMutiply3 = (int a, int b) -> mutiply(a, b);
 		
 		MathOperation MathOperationSum = (int a, int b) -> {
 			LambdaMath math = new LambdaMath();
@@ -21,6 +20,11 @@ public class Lambda {
 		};
 		
 		List<Integer> numbers = Lists.newArrayList();
+		
+		numbers.stream().forEach(number -> {
+			LambdaMath math = new LambdaMath();
+			math.sum(number, number);
+		});
 		
 		numbers.stream().forEach(number -> {
 			LambdaMath math = new LambdaMath();
