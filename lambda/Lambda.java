@@ -13,6 +13,8 @@ public class Lambda {
 		
 		MathOperation MathOperationMutiply5 = (int a, int b) -> mutiply(a, b);
 		
+		MathOperation MathOperationMutiply3 = (int a, int b) -> mutiply(a, b);
+		
 
 		MathOperation MathOperationSum = (int a, int b) -> {
 			LambdaMath math = new LambdaMath();
