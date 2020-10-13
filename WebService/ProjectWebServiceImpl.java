@@ -42,14 +42,6 @@ public class ProjectWebServiceImpl implements ProjectWebService {
 		return requestGET.httpGETOneByPath(restUri, ProjectDomain.class, param);
 	}
 
-	@Override
-	public ProjectDomain getProjectWithPropertiesByCode(String projectCode) {
-		String restUri = requestGET.combineBaseRestUri("project/code/{projectCode}");
-		StringMap<Object> param = new StringMap<Object>();
-		param.put("projectCode", projectCode);
-
-		return requestGET.httpGETOneByPath(restUri, ProjectDomain.class, param);
-	}
 
 	@Override
 	public ProjectSimpleDomain getCrossProject() {

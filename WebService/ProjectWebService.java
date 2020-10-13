@@ -13,7 +13,6 @@ public interface ProjectWebService {
 
 	public ProjectDomain getProject(long projectId);
 
-	public ProjectDomain getProjectWithPropertiesByCode(String projectCode);
 
 	public ProjectSimpleDomain getCrossProject();
 }
