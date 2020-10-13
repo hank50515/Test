@@ -51,9 +51,4 @@ public class ProjectWebServiceImpl implements ProjectWebService {
 		return requestGET.httpGETOneByPath(restUri, ProjectDomain.class, param);
 	}
 
-	@Override
-	public ProjectSimpleDomain getCrossProject() {
-		String restUri = requestGET.combineBaseRestUri("project/crossProject");
-		return requestGET.httpGETOne(restUri, ProjectSimpleDomain.class);
-	}
 }
