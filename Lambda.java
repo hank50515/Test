@@ -6,12 +6,7 @@ import com.google.common.collect.Lists;
 
 public class Lambda {
 
-	
-	private static int mutiply(int a, int b){
-		return a * b;
-	}
-	
-		public static void main(String args[]) {
+	public static void main(String args[]) {
 		
 		MathOperation MathOperationMutiply1 = (int a, int b) -> mutiply(a, b);
 		
@@ -32,4 +27,10 @@ public class Lambda {
 		numbers.stream().forEach(number -> mutiply(number, number));
 		
 	}
+	
+	
+	private static int mutiply(int a, int b){
+		return a * b;
+	}
+
 }
