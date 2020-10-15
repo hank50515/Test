@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 
 public class Lambda {
 
-	public static void main2(String args[]) {
+	public static void main(String args[]) {
 		
 		MathOperation MathOperationMutiply1 = (int a, int b) -> mutiply(a, b);
 		
