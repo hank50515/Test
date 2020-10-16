@@ -42,6 +42,11 @@ jQuery.fn.extend({
 			this.checked = true;
 		});
 	},
+	check2 : function(){
+		return this.each(function(){
+			this.checked = true;
+		});
+	},
 	unCheck : function(){
 		return this.each(function(){
 			this.checked = false;
