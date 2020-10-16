@@ -24,4 +24,8 @@ public class LambdaMath {
 	public int sum4(int a, int b, int c, int d, int f, int e){
 		return a + b;
 	}
+	
+	public int sum4(int a, int b, int c, int d, int f, int e, int gg){
+		return a + b;
+	}
 }
