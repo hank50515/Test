@@ -9,4 +9,7 @@ public class LambdaMath {
 		return a + b;
 	}
 	
+	public int sum2(int a, int b, int d){
+		return a + b + d;
+	}
 }
