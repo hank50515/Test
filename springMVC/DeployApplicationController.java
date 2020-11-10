@@ -108,21 +108,6 @@ public class DeployApplicationController {
 	@Autowired
 	private MergeRecordService mergeRecordService;
 
-	@ResponseBody
-	@RequestMapping(value = "applicationNos", method = RequestMethod.GET)
-	public List<String> findAllApplicationNos() {
-
-		List<String> applicationNos = Lists.newArrayList();
-
-		List<DeployApplication> deployApplications = deployApplicationService.findAll();
-
-		for (DeployApplication deployApplication : deployApplications) {
-			applicationNos.add(deployApplication.getApplicationNo());
-		}
-
-		return applicationNos;
-	}
-	
 
 
 	@ResponseBody
@@ -138,6 +123,21 @@ public class DeployApplicationController {
 		}
 
 		return requirementNos;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "applicationNos", method = RequestMethod.GET)
+	public List<String> findAllApplicationNos() {
+
+		List<String> applicationNos = Lists.newArrayList();
+
+		List<DeployApplication> deployApplications = deployApplicationService.findAll();
+
+		for (DeployApplication deployApplication : deployApplications) {
+			applicationNos.add(deployApplication.getApplicationNo());
+		}
+
+		return applicationNos;
 	}
 	
 	@ResponseBody
