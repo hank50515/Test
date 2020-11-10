@@ -141,14 +141,6 @@ public class DeployApplicationController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "{applicationNo}", method = RequestMethod.GET)
-	public DeployApplicationView getByApplicationNo(@PathVariable String applicationNo) {
-		DeployApplication deployApplication = deployApplicationService.getByApplicationNo(applicationNo);
-
-		return deployApplicationViewConverter.toView(deployApplication);
-	}
-
-	@ResponseBody
 	@RequestMapping(value = "departments", method = RequestMethod.GET)
 	public Set<HashMap<String, String>> findAllDepartments() {
 
@@ -165,6 +157,15 @@ public class DeployApplicationController {
 
 		return departments;
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "{applicationNo}", method = RequestMethod.GET)
+	public DeployApplicationView getByApplicationNo(@PathVariable String applicationNo) {
+		DeployApplication deployApplication = deployApplicationService.getByApplicationNo(applicationNo);
+
+		return deployApplicationViewConverter.toView(deployApplication);
+	}
+
 	
 	@ResponseBody
 	@RequestMapping(value = "report/departments", method = RequestMethod.GET)
