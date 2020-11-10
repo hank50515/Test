@@ -125,20 +125,6 @@ public class DeployApplicationController {
 		return requirementNos;
 	}
 	
-	@ResponseBody
-	@RequestMapping(value = "applicationNos", method = RequestMethod.GET)
-	public List<String> findAllApplicationNos() {
-
-		List<String> applicationNos = Lists.newArrayList();
-
-		List<DeployApplication> deployApplications = deployApplicationService.findAll();
-
-		for (DeployApplication deployApplication : deployApplications) {
-			applicationNos.add(deployApplication.getApplicationNo());
-		}
-
-		return applicationNos;
-	}
 	
 	@ResponseBody
 	@RequestMapping(value = "departments", method = RequestMethod.GET)
@@ -156,6 +142,21 @@ public class DeployApplicationController {
 		}
 
 		return departments;
+	}
+	
+		@ResponseBody
+	@RequestMapping(value = "applicationNos", method = RequestMethod.GET)
+	public List<String> findAllApplicationNos() {
+
+		List<String> applicationNos = Lists.newArrayList();
+
+		List<DeployApplication> deployApplications = deployApplicationService.findAll();
+
+		for (DeployApplication deployApplication : deployApplications) {
+			applicationNos.add(deployApplication.getApplicationNo());
+		}
+
+		return applicationNos;
 	}
 	
 	@ResponseBody
