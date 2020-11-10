@@ -123,13 +123,7 @@ public class DeployApplicationController {
 		return applicationNos;
 	}
 	
-	@ResponseBody
-	@RequestMapping(value = "{applicationNo}", method = RequestMethod.GET)
-	public DeployApplicationView getByApplicationNo(@PathVariable String applicationNo) {
-		DeployApplication deployApplication = deployApplicationService.getByApplicationNo(applicationNo);
 
-		return deployApplicationViewConverter.toView(deployApplication);
-	}
 
 	@ResponseBody
 	@RequestMapping(value = "requirementNos", method = RequestMethod.GET)
@@ -144,6 +138,14 @@ public class DeployApplicationController {
 		}
 
 		return requirementNos;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "{applicationNo}", method = RequestMethod.GET)
+	public DeployApplicationView getByApplicationNo(@PathVariable String applicationNo) {
+		DeployApplication deployApplication = deployApplicationService.getByApplicationNo(applicationNo);
+
+		return deployApplicationViewConverter.toView(deployApplication);
 	}
 
 	@ResponseBody
