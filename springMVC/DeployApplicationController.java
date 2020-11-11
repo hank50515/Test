@@ -108,13 +108,6 @@ public class DeployApplicationController {
 	@Autowired
 	private MergeRecordService mergeRecordService;
 
-	@ResponseBody
-	@RequestMapping(value = "{applicationNo}", method = RequestMethod.GET)
-	public DeployApplicationView getByApplicationNo(@PathVariable String applicationNo) {
-		DeployApplication deployApplication = deployApplicationService.getByApplicationNo(applicationNo);
-
-		return deployApplicationViewConverter.toView(deployApplication);
-	}
 
 	@ResponseBody
 	@RequestMapping(value = "requirementNos", method = RequestMethod.GET)
@@ -150,7 +143,15 @@ public class DeployApplicationController {
 		return departments;
 	}
 	
-		@ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "{applicationNo}", method = RequestMethod.GET)
+	public DeployApplicationView getByApplicationNo(@PathVariable String applicationNo) {
+		DeployApplication deployApplication = deployApplicationService.getByApplicationNo(applicationNo);
+
+		return deployApplicationViewConverter.toView(deployApplication);
+	}
+	
+	@ResponseBody
 	@RequestMapping(value = "applicationNos", method = RequestMethod.GET)
 	public List<String> findAllApplicationNos() {
 
