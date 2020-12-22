@@ -112,7 +112,14 @@ public class DeployApplicationController {
 	@ResponseBody
 	@RequestMapping(value = "requirementNos", method = RequestMethod.GET)
 	public Set<String> findAllRequirementNos() {
-
+List<Department> dept = departmentService.findITDepartment();
+		for (Department department : dept) {
+			HashMap<String, String> dep = Maps.newHashMap();
+			DepartmentId deptId = department.getKey();
+			dep.put("departmentId", deptId.getDepartmentId());
+			dep.put("departmentName", department.getDepartmentName());
+			departments.add(dep);
+		}
 		Set<String> requirementNos = Sets.newLinkedHashSet();
 
 		List<DeployApplication> deployApplications = deployApplicationService.findAll();
@@ -128,6 +135,14 @@ public class DeployApplicationController {
 	@ResponseBody
 	@RequestMapping(value = "departments", method = RequestMethod.GET)
 	public Set<HashMap<String, String>> findAllDepartments() {
+		List<Department> dept = departmentService.findITDepartment();
+		for (Department department : dept) {
+			HashMap<String, String> dep = Maps.newHashMap();
+			DepartmentId deptId = department.getKey();
+			dep.put("departmentId", deptId.getDepartmentId());
+			dep.put("departmentName", department.getDepartmentName());
+			departments.add(dep);
+		}
 
 		Set<HashMap<String, String>> departments = Sets.newLinkedHashSet();
 
