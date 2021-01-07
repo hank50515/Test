@@ -115,10 +115,11 @@ public class DeployApplicationController {
 		Set<String> requirementNos = Sets.newLinkedHashSet();
 
 		List<DeployApplication> deployApplications = deployApplicationService.findAll();
-Set<String> requirementNos2 = Sets.newLinkedHashSet();
 		for (DeployApplication deployApplication : deployApplications) {
 			requirementNos.add(deployApplication.getRequirementApplicationRelation().getRequirementNo());
 		}
+		
+		Set<String> requirementNos2 = Sets.newLinkedHashSet();
 
 		return requirementNos;
 	}
